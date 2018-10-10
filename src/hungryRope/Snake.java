@@ -10,21 +10,36 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 /**
- * @author chhar9972
+ * Snake class stores snake data such as bodyCoords, aiStatus, headColour,
+ * bodyColour, direction, and alive
+ * @see Point
+ * @see Color
+ * @see ArrayList
+ * @see Direction
  */
 public class Snake {
-    boolean Ai, alive;
+    boolean aiStatus, alive;
     int score;
     Color bodyColour, headColour;
     Point head;
     Direction direction, prevDirection;
     ArrayList<Point> bodyCoords;
     
-    //Constructor
-    Snake(int r, int g, int b, boolean Ai)
+    /**
+     * Makes a new {@link Snake} with a random start position and no {@ling Direction}
+     * @param r
+     * @param g
+     * @param b
+     * @param aiStatus
+     * @see Point
+     * @see Color
+     * @see ArrayList
+     * @see Direction
+     */
+    Snake(int r, int g, int b, boolean aiStatus)
     {
         
-        this.Ai = Ai;
+        this.aiStatus = aiStatus;
         bodyColour = new Color(r, g, b);
         r = r > 0 ? 255 : 0;
         g = g > 0 ? 255 : 0;
@@ -32,20 +47,27 @@ public class Snake {
         headColour = new Color(r, g, b);
         score = 1;
         alive = true;
-        if (Ai) this.direction = new Direction('x', 1);
+        if (aiStatus) this.direction = new Direction('x', 1);
         else this.direction = new Direction(' ', 0);
         bodyCoords = new ArrayList();
         bodyCoords.add(new Point (random(4, width - 4), random(4, height - 4)));
     }
     
+    /**
+     * Moves snake and changes direction if aiStatus = true
+     */
     public void move()
     {
         head = bodyCoords.get(0);
-        if(Ai) aiMove();
+        if(aiStatus) aiMove();
         moveSnake();
         head = bodyCoords.get(0);
     }
     
+    /**
+     * Determines the {@link Direction}
+     * @see Direction
+     */
     public void aiMove()
     {
         direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
@@ -57,6 +79,12 @@ public class Snake {
         }
     }
 
+    /**
+     * Moves the snake and its and its body {@link Point} {@link Direction} along the grid
+     * also checks if the snake has hit the edges/body parts, and if it's collected food
+     * @see Direction
+     * @see Point
+     */
     public void moveSnake()
     {
         //Moves bodyCoords, checks for food collection, and checks if the bodyCoords rammed itself
@@ -86,6 +114,10 @@ public class Snake {
         checkHit();
     }
 
+    /**
+     * Checks if the head's coords equal the food's coords
+     * @see Point
+     */
     public void checkFood()
     {
         //Adds to score and changes food if the bodyCoords head is on the food
@@ -96,6 +128,11 @@ public class Snake {
         }
     }
 
+    /**
+     * Checks if the snake has hit a body part
+     * @see Point
+     * @see ArrayList
+     */
     private void checkHit()
     {
         //Make better later
@@ -106,14 +143,29 @@ public class Snake {
         }
     }
     
+    /**
+     * Makes a {@link Point} with coords where coord1 is on axis
+     * @param axis
+     * @param coord1
+     * @param coord2
+     * @return New {@link Point} with coords based on the axis
+     * @see Point
+     */
     private Point makePoint(char axis, int coord1, int coord2)
     {
         Point newPoint = axis == 'x' ? new Point (coord1, coord2) : new Point (coord2, coord1);
         return newPoint;
     }
     
-    private boolean checkBody(Point coords, String[][] map)
+    /**
+     * Checks for body at {@link Point} point
+     * @param point
+     * @param map
+     * @return True if at point on map contains "body"
+     * @see Point
+     */
+    private boolean checkBody(Point point, String[][] map)
     {
-            return "body".equals(map[(int) coords.getX()][(int) coords.getY()].substring(1, 6).trim());
+            return "body".equals(map[(int) point.getX()][(int) point.getY()].substring(1, 6).trim());
     }
 }
