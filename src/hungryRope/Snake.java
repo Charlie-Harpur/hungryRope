@@ -10,12 +10,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 /**
- * Snake class stores snake data such as bodyCoords, aiStatus, headColour,
- * bodyColour, direction, and alive
- * @see Point
- * @see Color
- * @see ArrayList
- * @see Direction
+ * Snake class stores snake data such as {@link bodyCoords}, {@link aiStatus}, {@link headColour},
+ * {@link bodyColour}, {@link direction}, and {@link alive}
  */
 public class Snake {
     boolean aiStatus, alive;
@@ -26,17 +22,14 @@ public class Snake {
     ArrayList<Point> bodyCoords;
     
     /**
-     * Makes a new {@link Snake} with a random start position and no {@ling Direction}
-     * @param r
-     * @param g
-     * @param b
-     * @param aiStatus
-     * @see Point
-     * @see Color
-     * @see ArrayList
+     * Creates a new Snake with a random start position and no {@link Direction}
+     * @param r Red value
+     * @param g Green value
+     * @param b Blue value
+     * @param aiStatus whether the Snake is AI controlled
      * @see Direction
      */
-    Snake(int r, int g, int b, boolean aiStatus)
+    public Snake(int r, int g, int b, boolean aiStatus)
     {
         
         this.aiStatus = aiStatus;
@@ -54,7 +47,7 @@ public class Snake {
     }
     
     /**
-     * Moves snake and changes direction if aiStatus = true
+     * Moves snake and changes direction if {@link aiStatus} = true
      */
     public void move()
     {
@@ -80,10 +73,9 @@ public class Snake {
     }
 
     /**
-     * Moves the snake and its and its body {@link Point} {@link Direction} along the grid
+     * Moves the snake and its and its body Point {@link Direction} along the grid
      * also checks if the snake has hit the edges/body parts, and if it's collected food
      * @see Direction
-     * @see Point
      */
     public void moveSnake()
     {
@@ -115,8 +107,7 @@ public class Snake {
     }
 
     /**
-     * Checks if the head's coords equal the food's coords
-     * @see Point
+     * Checks if the head's coordinates equal the food's coordinates
      */
     public void checkFood()
     {
@@ -130,10 +121,8 @@ public class Snake {
 
     /**
      * Checks if the snake has hit a body part
-     * @see Point
-     * @see ArrayList
      */
-    private void checkHit()
+    public void checkHit()
     {
         //Make better later
         //Checks if the bodyCoords head has hit any part of the body
@@ -144,27 +133,25 @@ public class Snake {
     }
     
     /**
-     * Makes a {@link Point} with coords where coord1 is on axis
-     * @param axis
-     * @param coord1
-     * @param coord2
-     * @return New {@link Point} with coords based on the axis
-     * @see Point
+     * Makes a Point with coordinates where {@code onAxis} is on {@code axis}
+     * @param axis Axis to put {@code onAxis} on
+     * @param onAxis Coordinate on {@code axis}
+     * @param offAxis Coordinate off {@code axis}
+     * @return New Point with coordinates based on the axis
      */
-    private Point makePoint(char axis, int coord1, int coord2)
+    public Point makePoint(char axis, int onAxis, int offAxis)
     {
-        Point newPoint = axis == 'x' ? new Point (coord1, coord2) : new Point (coord2, coord1);
+        Point newPoint = axis == 'x' ? new Point (onAxis, offAxis) : new Point (offAxis, onAxis);
         return newPoint;
     }
     
     /**
-     * Checks for body at {@link Point} point
-     * @param point
-     * @param map
-     * @return True if at point on map contains "body"
-     * @see Point
+     * Checks for "body" at {@code point}
+     * @param point Point on {@code map}
+     * @param map Map to look through
+     * @return True if at {@code point} on {@code map} contains "body"
      */
-    private boolean checkBody(Point point, String[][] map)
+    public boolean checkBody(Point point, String[][] map)
     {
             return "body".equals(map[(int) point.getX()][(int) point.getY()].substring(1, 6).trim());
     }

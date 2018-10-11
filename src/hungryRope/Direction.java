@@ -9,9 +9,9 @@ public class Direction
     int posOrNeg;
 
     /**
-     * Creates a new direction
-     * @param axis
-     * @param posOrNeg
+     * Creates a new Direction
+     * @param axis axis of movement
+     * @param posOrNeg direction along axis
      */
     Direction (char axis, int posOrNeg)
     {
@@ -20,9 +20,9 @@ public class Direction
     }
 
     /**
-     * Checks if two directions are equal to each other
-     * @param direction2
-     * @return Whether the direction is equal to the other direction
+     * Checks if two Directions are equal to each other
+     * @param direction2 direction to compare to
+     * @return Whether the Direction is equal to the other Direction
      */
     public boolean equals(Direction direction2)
     {

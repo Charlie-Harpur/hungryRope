@@ -6,7 +6,6 @@ package hungryRope;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import static java.lang.Character.toLowerCase;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import javax.swing.ImageIcon;
  */
 public class HungryRope extends javax.swing.JFrame {
     boolean alive = false, pause = false, ai = false;
-    int score = 0, difficulty, width = 75, height = 35, gridSize = 15;
+    int score = 0, difficulty, width = 75, height = 35, gridSize = gridSize;
     Direction direction = new Direction(' ', 0), prevDirection;
     String[][] grid = new String[width][height];
     Point food, head;
@@ -258,6 +257,9 @@ public class HungryRope extends javax.swing.JFrame {
         keyInput.setVisible(!see);
     }
     
+    /**
+     * Thread separate from GUI so the game runs smoothly
+     */
     public class GameThread extends Thread
     {
         @Override
@@ -277,95 +279,7 @@ public class HungryRope extends javax.swing.JFrame {
             changeVisible(true);
         }
         
-        private void AIMove()
-        {
-            
-            head = snake.get(0);
-            /*
-            
-            
-            
-            
-            */
-            
-            //direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
-            //direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
-            int distance;
-            boolean good = false;
-            distance = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? getCoord(direction.axis, head) - getCoord(direction.axis, food) : getCoord(direction.axis, food) - getCoord(direction.axis, head);
-            if (!checkDirection(direction.posOrNeg, direction.axis, distance))
-            {
-                for (char axis : new char[] {'x', 'y'})
-                {
-                    if (getCoord(axis, head) != getCoord(axis, food))
-                    {
-                        for (int posOrNeg : new int[] {1, -1})
-                        {
-                            distance = getCoord(axis, food) - getCoord(axis, head);
-                            if (checkDirection(posOrNeg, axis, distance))
-                            {
-                                direction.axis = axis;
-                                direction.posOrNeg = posOrNeg;
-                                good = true;
-                                break;
-                            }
-                        }
-                        if (good) break;
-                    }
-                }
-            }
-        }
-        
-        private void moveSnake()
-        {
-            //Moves snake, checks for food collection, and checks if the snake rammed itself
-            Point prevHead = snake.get(0);
-            //Variable used to prevent snake from going back in on itself
-            prevDirection = direction;
-
-            if (snake.size() != score)
-            {//Grows the snake
-                snake.add(new Point(0,0));
-            }
-            for (int i = snake.size() - 1; i > 0; i--)
-            {//Moves the snake body forwards
-                snake.set(i, snake.get(i - 1));
-            }
-
-            if (direction.axis == 'y')
-            {//Moves the snake head forwards if the direction is +2 or -2 it moves along y axis otherwise it moves along x
-                snake.set(0, new Point ((int) prevHead.getX(), (int) prevHead.getY() + direction.posOrNeg));
-            }else if (direction.axis == 'x')
-            {
-                snake.set(0, new Point ((int) prevHead.getX() + direction.posOrNeg, (int) prevHead.getY()));
-            }
-            
-            checkFood();
-            
-            checkHit();
-        }
-        
-        private void checkFood()
-        {
-            //Adds to score and changes food if the snake head is on the food
-            if (snake.get(0).equals(food))
-            {
-                score += 3;
-                food = new Point (random(0, width), random(0, height));
-            }
-        }
-        
-        private void checkHit()
-        {
-            //Make better later
-            //Checks if the snake head has hit any part of the body
-            for (int i = 1; i < snake.size(); i++)
-            {//Checks to see if the head ran into a part of the body
-                if (snake.get(i).equals(snake.get(0))) alive = false;
-            }
-        }
-        
-        private boolean checkDirection(int posOrNeg, char axis, int distance)
+        public boolean checkDirection(int posOrNeg, char axis, int distance)
         {
             int eta, headCoord = getCoord(axis, head);
             boolean fail = false;
@@ -382,13 +296,10 @@ public class HungryRope extends javax.swing.JFrame {
             return !fail;
         }
         
-        private Point makePoint(char axis, int coord1, int coord2)
-        {
-            Point newPoint = axis == 'x' ? new Point (coord1, coord2) : new Point (coord2, coord1);
-            return newPoint;
-        }
-        
-        private void updateGrid()
+        /**
+         * Updates grid array with new head, body, and food coordinates
+         */
+        public void updateGrid()
         {
             //Updates grid array with snake and food coords, also checking for the snake hitting the side
             try
@@ -413,7 +324,10 @@ public class HungryRope extends javax.swing.JFrame {
             }
         }
         
-        private void paintScreen()
+        /**
+         * Takes grid information and calls {@link colourSquare} to change pixels to match grid
+         */
+        public void paintScreen()
         {
             //Takes data from grid and prints to a BufferedImage that is set as the icon on screen
             for (int x = 0; x < grid.length; x++)
@@ -427,7 +341,7 @@ public class HungryRope extends javax.swing.JFrame {
                             colourSquare(x, y, 0, 0, 255);
                             break;
                         case "body":
-                            colourSquare(x, y, 0, 150, 0);
+                            colourSquare(x, y, 0, gridSize0, 0);
                             break;
                         case "head":
                             colourSquare(x, y, 100, 255, 100);
@@ -443,9 +357,17 @@ public class HungryRope extends javax.swing.JFrame {
             iconPlayArea.setIcon(new ImageIcon(playArea));
         }
         
-        private void colourSquare(int startX, int startY, int r, int g, int b)
+        /**
+         * Sets pixel colour for a rectangle({@code startX} * {@code gridSize}, {@code startY} * {@code gridSize}, {@code startX} + {@code gridSize},
+         * {@code startY} + {@code gridSize}) on {@code playArea}
+         * @param startX Starting x coordinate
+         * @param startY Starting y coordinate
+         * @param r Red value
+         * @param g Green value
+         * @param b Blue value
+         */
+        public void colourSquare(int startX, int startY, int r, int g, int b)
         {
-            //Sets pixel colour for ara rectangle(startX * 15, startY * 15, startX + 15, startY + 15)
             startX *= gridSize;
             startY *= gridSize;
             int endX = startX + gridSize;
@@ -459,19 +381,39 @@ public class HungryRope extends javax.swing.JFrame {
             }
         }
         
-        private int getCoord (char axis, Point point)
+        /**
+         * Returns a coordinate of {@code point} depending on the {@code axis}
+         * @param axis Axis of coordinate to retrieve
+         * @param point Point to get coordinate from
+         * @return {@code point}.get[{@code axis}]
+         */
+        public int getCoord (char axis, Point point)
         {
             //Allows for more flexibility when getting values from points
             return (axis == 'x' ? (int) point.getX() : (int) point.getY());
         }
         
-        public int notAxis(char axis, Point point)
+        /**
+         * Returns the other axis than input {@code axis}
+         * @param axis Axis to invert
+         * @return (When {@code axis} = 'x') y (When {@code axis} = 'y') x
+         */
+        public char notAxis(char axis)
         {
-            //return axis == 'x' ? 'y' : 'x';
-            return (axis == 'y' ? (int) point.getX() : (int) point.getY());
+            return axis == 'x' ? 'y' : 'x';
         }
         
-        private String getElementAt(char axis, int onAxis, int offAxis, String[][] array)
+        /**
+         * Gets and element of an array using coordinates {@code onAxis} and {@code offAxis} in {@code array}
+         * <p>
+         * This is useful for more flexible addition when using a {@link Direction} to add to a specific coordinate
+         * @param axis Axis for first coordinate
+         * @param onAxis Coordinate on the {@code axis} axis
+         * @param offAxis Coordinate not on the {@code axis} axis
+         * @param array Array to retrieve from
+         * @return (when {@code axis} = 'x') {@code  array}[{@code onAxis}][{@code offAxis}] and (when {@code axis} = 'y') {@code array}[{@code offAxis}][{@code onAxis}]
+         */
+        public String getElementAt(char axis, int onAxis, int offAxis, String[][] array)
         {
             String nextSquare;
             try
@@ -484,6 +426,10 @@ public class HungryRope extends javax.swing.JFrame {
             return nextSquare;
         }
         
+        /**
+         * Sleeps for {@code millis} milliseconds
+         * @param millis Milliseconds to sleep
+         */
         public void sleep(int millis)
         {
             try {
@@ -493,23 +439,13 @@ public class HungryRope extends javax.swing.JFrame {
             }
         }
     }
-    public class Direction
-    {
-        char axis;
-        int posOrNeg;
-        
-        public Direction (char axis, int posOrNeg)
-        {
-            this.axis = axis;
-            this.posOrNeg = posOrNeg;
-        }
-        
-        public boolean equals(Direction direction2)
-        {
-            return (this.axis == direction2.axis && this.posOrNeg == direction2.posOrNeg);
-        }
-    }
     
+    /**
+     * Returns a random integer within the parameters
+     * @param min Minimum value in range
+     * @param max Maximum value in range
+     * @return Random integer within range
+     */
     public int random(int min, int max)
     {
         int randomNum;
@@ -517,7 +453,14 @@ public class HungryRope extends javax.swing.JFrame {
         return randomNum;
     }
     
-    private int getARGB(int r, int g, int b)
+    /**
+     * Gets integer code for a colour
+     * @param r Red value
+     * @param g Green value
+     * @param b Blue value
+     * @return ARGB code for colour(r, g, b)
+     */
+    public int getARGB(int r, int g, int b)
     {
         return new Color (r, g, b).getRGB();
     }
