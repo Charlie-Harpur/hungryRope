@@ -179,6 +179,7 @@ public class HungryRope extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
+        snakes[0] = new Snake(0, 150, 0, false);
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_buttonStartActionPerformed
@@ -389,28 +390,6 @@ public class HungryRope extends javax.swing.JFrame {
         }
         
         /**
-         * Returns a coordinate of {@code point} depending on the {@code axis}
-         * @param axis Axis of coordinate to retrieve
-         * @param point Point to get coordinate from
-         * @return {@code point}.get[{@code axis}]
-         */
-        public int getCoord (char axis, Point point)
-        {
-            //Allows for more flexibility when getting values from points
-            return (axis == 'x' ? (int) point.getX() : (int) point.getY());
-        }
-        
-        /**
-         * Returns the other axis than input {@code axis}
-         * @param axis Axis to invert
-         * @return (When {@code axis} = 'x') y (When {@code axis} = 'y') x
-         */
-        public char notAxis(char axis)
-        {
-            return axis == 'x' ? 'y' : 'x';
-        }
-        
-        /**
          * Gets and element of an array using coordinates {@code onAxis} and {@code offAxis} in {@code array}
          * <p>
          * This is useful for more flexible addition when using a {@link Direction} to add to a specific coordinate
@@ -447,13 +426,36 @@ public class HungryRope extends javax.swing.JFrame {
         }
     }
     
+    
+    /**
+     * Returns a coordinate of {@code point} depending on the {@code axis}
+     * @param axis Axis of coordinate to retrieve
+     * @param point Point to get coordinate from
+     * @return {@code point}.get[{@code axis}]
+     */
+    public static int getCoord (char axis, Point point)
+    {
+        //Allows for more flexibility when getting values from points
+        return (axis == 'x' ? (int) point.getX() : (int) point.getY());
+    }
+
+    /**
+     * Returns the other axis than input {@code axis}
+     * @param axis Axis to invert
+     * @return (When {@code axis} = 'x') y (When {@code axis} = 'y') x
+     */
+    public static char notAxis(char axis)
+    {
+        return axis == 'x' ? 'y' : 'x';
+    }
+    
     /**
      * Returns a random integer within the parameters
      * @param min Minimum value in range
      * @param max Maximum value in range
      * @return Random integer within range
      */
-    public int random(int min, int max)
+    public static int random(int min, int max)
     {
         int randomNum;
         randomNum = (int)(Math.random() * max + min);

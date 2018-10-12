@@ -64,9 +64,9 @@ public class Snake {
     public void aiMove()
     {
         direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
-        direction.posOrNeg = getCoord(head, direction.axis) > getCoord(food, direction.axis) ? -1 : 1;
+        direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
 
-        if (checkBody(makePoint(direction.axis, getCoord(head, direction.axis) + direction.posOrNeg, getCoord(head, notAxis(direction.axis))), grid))
+        if (checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid))
         {
             System.out.println("po");
         }
