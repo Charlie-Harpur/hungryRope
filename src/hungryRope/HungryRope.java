@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import static java.lang.Character.toLowerCase;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -203,6 +202,7 @@ public class HungryRope extends javax.swing.JFrame {
     }//GEN-LAST:event_keyInputKeyTyped
 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
+        snakes[0] = new Snake(150, 0, 150, true);
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
@@ -260,6 +260,7 @@ public class HungryRope extends javax.swing.JFrame {
             updateGrid();
             do
             {
+                snakesAlive = false;
                 for (Snake snake : snakes) 
                 {
                     snake.move();
@@ -303,7 +304,7 @@ public class HungryRope extends javax.swing.JFrame {
             {//resets every index in the grid
                 for (int y = 0; y < grid[0].length; y++)
                 {
-                    grid[x][y] = "blank";
+                    grid[x][y] = " blank ";
                 }
             }
             for (int snakeIndex = 0; snakeIndex < snakes.length; snakeIndex++)
@@ -314,8 +315,8 @@ public class HungryRope extends javax.swing.JFrame {
                     {//Writes snake body to grid
                         grid[(int) getCoord('x', snakes[snakeIndex].bodyCoords.get(bodyIndex))][(int) getCoord('y', snakes[snakeIndex].bodyCoords.get(bodyIndex))] = snakeIndex + " body " + bodyIndex;
                     }
-                    grid[(int) snakes[snakeIndex].bodyCoords.get(0).getX()][(int) snakes[snakeIndex].bodyCoords.get(0).getY()] = snakeIndex + " head";//Makes head different
-                    grid[(int) food.getX()][(int) food.getY()] = "food";//Sets food coords
+                    grid[(int) snakes[snakeIndex].bodyCoords.get(0).getX()][(int) snakes[snakeIndex].bodyCoords.get(0).getY()] = snakeIndex + " head ";//Makes head different
+                    grid[(int) food.getX()][(int) food.getY()] = " food ";//Sets food coords
                 }catch (ArrayIndexOutOfBoundsException offSide)
                 {//If the snake goes offside
                     snakes[snakeIndex].alive = false;
