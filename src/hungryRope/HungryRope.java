@@ -18,13 +18,13 @@ import javax.swing.ImageIcon;
  * @author chhar9972
  */
 public class HungryRope extends javax.swing.JFrame {
-    boolean alive = false, pause = false, ai = false;
-    int score = 0, difficulty, width = 75, height = 35, gridSize = gridSize;
-    Direction direction = new Direction(' ', 0), prevDirection;
-    String[][] grid = new String[width][height];
-    Point food, head;
-    ArrayList<Point> snake = new ArrayList();
+    boolean snakesAlive, pause = false;
+    final static int width = 75, height = 35, gridSize = 15;
+    int difficulty;
+    static String[][] grid = new String[width][height];
     BufferedImage playArea;
+    static Point food;
+    Snake[] snakes = new Snake[1];
     GameThread game = new GameThread();
     
     /**
@@ -179,8 +179,6 @@ public class HungryRope extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
-        direction.axis = ' ';
-        direction.posOrNeg = 0;
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_buttonStartActionPerformed
@@ -188,25 +186,22 @@ public class HungryRope extends javax.swing.JFrame {
     private void keyInputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyInputKeyTyped
         char keyTyped = toLowerCase(evt.getKeyChar());
         
-        if (keyTyped == 'w'  && (!prevDirection.equals(new Direction ('y', 1)) || score == 1))
+        if (keyTyped == 'w'  && (!snakes[0].prevDirection.equals(new Direction ('y', 1)) || snakes[0].score == 1))
         {//Checks key and prevents snake from going in on itself
-            direction = new Direction ('y', -1);
-        }else if (keyTyped == 's' && (!prevDirection.equals(new Direction ('y', -1)) || score == 1))
+            snakes[0].direction = new Direction ('y', -1);
+        }else if (keyTyped == 's' && (!snakes[0].prevDirection.equals(new Direction ('y', -1)) || snakes[0].score == 1))
         {
-            direction = new Direction ('y', 1);
-        }else if (keyTyped == 'a' && (!prevDirection.equals(new Direction ('x', 1)) || score == 1))
+            snakes[0].direction = new Direction ('y', 1);
+        }else if (keyTyped == 'a' && (!snakes[0].prevDirection.equals(new Direction ('x', 1)) || snakes[0].score == 1))
         {
-            direction = new Direction ('x', -1);
-        }else if (keyTyped == 'd' && (!prevDirection.equals(new Direction ('x', -1)) || score == 1))
+            snakes[0].direction = new Direction ('x', -1);
+        }else if (keyTyped == 'd' && (!snakes[0].prevDirection.equals(new Direction ('x', -1)) || snakes[0].score == 1))
         {
-            direction = new Direction ('x', 1);
+            snakes[0].direction = new Direction ('x', 1);
         }
     }//GEN-LAST:event_keyInputKeyTyped
 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
-        ai = true;
-        direction.axis = 'x';//Direction is initally set because the A.I. algorithem requires direction values to work
-        direction.posOrNeg = 1;
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
@@ -216,12 +211,8 @@ public class HungryRope extends javax.swing.JFrame {
         //Resets game variables and starts game thread
         try
         {
-            snake.clear();
-            snake.add(new Point (1, 1));
-            score = 1;
             difficulty = Integer.parseInt(fieldDifficulty.getText());
             food = new Point (random(0, width), random(0, height));
-            alive = true;
 
             changeVisible(false);
 
@@ -233,7 +224,7 @@ public class HungryRope extends javax.swing.JFrame {
             {//Clears image used as playArea
                 for (int y = 0; y < height * gridSize; y++)
                 {
-                    playArea.setRGB(x, y, getARGB(0, 0, 255));
+                    playArea.setRGB(x, y, getARGB(new Color (0, 0, 255)));
                 }
             }
 
@@ -266,19 +257,22 @@ public class HungryRope extends javax.swing.JFrame {
         public void run()
         {
             updateGrid();
-            while(alive)
+            do
             {
-                if(ai) AIMove();
-                moveSnake();
+                for (Snake snake : snakes) 
+                {
+                    snake.move();
+                    snakesAlive = snakesAlive ? true : snake.alive;
+                }
                 updateGrid();
                 paintScreen();
                 sleep(difficulty);
-            }
-            ai = false;
+            }while (snakesAlive);
             buttonStart.setVisible(true);
             changeVisible(true);
         }
         
+        /*
         public boolean checkDirection(int posOrNeg, char axis, int distance)
         {
             int eta, headCoord = getCoord(axis, head);
@@ -295,6 +289,7 @@ public class HungryRope extends javax.swing.JFrame {
             }
             return !fail;
         }
+        */
         
         /**
          * Updates grid array with new head, body, and food coordinates
@@ -302,25 +297,28 @@ public class HungryRope extends javax.swing.JFrame {
         public void updateGrid()
         {
             //Updates grid array with snake and food coords, also checking for the snake hitting the side
-            try
+            
+            for (int x = 0; x < grid.length; x++)
+            {//resets every index in the grid
+                for (int y = 0; y < grid[0].length; y++)
+                {
+                    grid[x][y] = "blank";
+                }
+            }
+            for (int snakeIndex = 0; snakeIndex < snakes.length; snakeIndex++)
             {
-                for (int x = 0; x < grid.length; x++)
-                {//resets every index in the grid
-                    for (int y = 0; y < grid[0].length; y++)
-                    {
-                        grid[x][y] = "blank";
+                try
+                {
+                    for(int bodyIndex = 1; bodyIndex < snakes[snakeIndex].bodyCoords.size(); bodyIndex++)
+                    {//Writes snake body to grid
+                        grid[(int) getCoord('x', snakes[snakeIndex].bodyCoords.get(bodyIndex))][(int) getCoord('y', snakes[snakeIndex].bodyCoords.get(bodyIndex))] = snakeIndex + " body " + bodyIndex;
                     }
+                    grid[(int) snakes[snakeIndex].bodyCoords.get(0).getX()][(int) snakes[snakeIndex].bodyCoords.get(0).getY()] = snakeIndex + " head";//Makes head different
+                    grid[(int) food.getX()][(int) food.getY()] = "food";//Sets food coords
+                }catch (ArrayIndexOutOfBoundsException offSide)
+                {//If the snake goes offside
+                    snakes[snakeIndex].alive = false;
                 }
-                for(int i = 1; i < snake.size(); i++)
-                {//Writes snake body to grid
-                    grid[(int) getCoord('x', snake.get(i))][(int) getCoord('y', snake.get(i))] = "body " + i;
-                }
-                grid[(int) snake.get(0).getX()][(int) snake.get(0).getY()] = "head ";//Makes head different
-                grid[(int) food.getX()][(int) food.getY()] = "food ";//Sets food coords
-
-            }catch (ArrayIndexOutOfBoundsException offSide)
-            {//If the snake goes offside
-                alive = false;
             }
         }
         
@@ -329,31 +327,42 @@ public class HungryRope extends javax.swing.JFrame {
          */
         public void paintScreen()
         {
+            
             //Takes data from grid and prints to a BufferedImage that is set as the icon on screen
+            int snakeIndex;
             for (int x = 0; x < grid.length; x++)
             {
                 for (int y = 0; y < grid[0].length; y++)
                 {
                     //Goes through grid painting squares different colour for different grid square type
                     String tileValue = grid[x][y];
-                    switch (tileValue.substring(0, 5).trim()) {
+                    
+                    try
+                    {//If it's a body part changes colour based on which snake
+                        snakeIndex = Integer.parseInt(tileValue.substring(0, 1));
+                    }catch (NumberFormatException nfe)
+                    {
+                        snakeIndex = 0;
+                    }
+                    
+                    switch (tileValue.substring(1, 6).trim()) {
                         case "blank":
-                            colourSquare(x, y, 0, 0, 255);
+                            colourSquare(x, y, new Color (0, 0, 255));
                             break;
                         case "body":
-                            colourSquare(x, y, 0, gridSize0, 0);
+                            colourSquare(x, y, snakes[snakeIndex].bodyColour);
                             break;
                         case "head":
-                            colourSquare(x, y, 100, 255, 100);
+                            colourSquare(x, y, snakes[snakeIndex].headColour);
                             break;
                         case "food":
-                            colourSquare(x, y, 255, 255, 0);
+                            colourSquare(x, y, new Color(255, 255, 0));
                             break;
                         default: break;
                     }
                 }
             }
-            labelScore.setText("Score: " + score);
+            labelScore.setText("Score: " + snakes[0].score);
             iconPlayArea.setIcon(new ImageIcon(playArea));
         }
         
@@ -362,11 +371,9 @@ public class HungryRope extends javax.swing.JFrame {
          * {@code startY} + {@code gridSize}) on {@code playArea}
          * @param startX Starting x coordinate
          * @param startY Starting y coordinate
-         * @param r Red value
-         * @param g Green value
-         * @param b Blue value
+         * @param colour Colour for square
          */
-        public void colourSquare(int startX, int startY, int r, int g, int b)
+        public void colourSquare(int startX, int startY, Color colour)
         {
             startX *= gridSize;
             startY *= gridSize;
@@ -376,7 +383,7 @@ public class HungryRope extends javax.swing.JFrame {
             {
                 for (int y = startY; y < endY; y++)
                 {
-                    playArea.setRGB (x, y, getARGB(r, g, b));
+                    playArea.setRGB (x, y, getARGB(colour));
                 }
             }
         }
@@ -454,15 +461,13 @@ public class HungryRope extends javax.swing.JFrame {
     }
     
     /**
-     * Gets integer code for a colour
-     * @param r Red value
-     * @param g Green value
-     * @param b Blue value
-     * @return ARGB code for colour(r, g, b)
+     * Gets integer code for {@code colour}
+     * @param colour Colour to convert
+     * @return ARGB code for {@code colour}
      */
-    public int getARGB(int r, int g, int b)
+    public int getARGB(Color colour)
     {
-        return new Color (r, g, b).getRGB();
+        return colour.getRGB();
     }
     
     /**
