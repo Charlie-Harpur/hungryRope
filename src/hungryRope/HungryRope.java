@@ -202,7 +202,7 @@ public class HungryRope extends javax.swing.JFrame {
     }//GEN-LAST:event_keyInputKeyTyped
 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
-        snakes[0] = new Snake(150, 0, 150, true);
+        snakes[0] = new Snake(0, 150, 0, true);
         snakes[1] = new Snake(150, 0, 150, true);
         startGame();
         labelScore.setVisible(true);
@@ -264,7 +264,7 @@ public class HungryRope extends javax.swing.JFrame {
                 snakesAlive = false;
                 for (Snake snake : snakes) 
                 {
-                    snake.move();
+                    if (snake.alive) snake.move();
                     snakesAlive = snakesAlive ? true : snake.alive;
                 }
                 updateGrid();

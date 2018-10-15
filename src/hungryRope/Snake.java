@@ -54,7 +54,6 @@ public class Snake {
         head = bodyCoords.get(0);
         if(aiStatus) aiMove();
         moveSnake();
-        head = bodyCoords.get(0);
     }
     
     /**
@@ -63,12 +62,22 @@ public class Snake {
      */
     public void aiMove()
     {
+        //Primary objective
         direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
-
+        //Detours that navigate body parts
+        swapDirection();
+    }
+    
+    public void swapDirection()
+    {
         if (checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid))
         {
-            //System.out.println("po");
+            direction.axis = notAxis(direction.axis);
+        }
+        if (checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid))
+        {
+            direction.posOrNeg *= -1;
         }
     }
 
@@ -100,6 +109,8 @@ public class Snake {
         {
             bodyCoords.set(0, new Point ((int) prevHead.getX() + direction.posOrNeg, (int) prevHead.getY()));
         }
+        
+        head = bodyCoords.get(0);
 
         checkFood();
 
@@ -124,18 +135,15 @@ public class Snake {
      */
     public void checkHit()
     {
-        //NOT WORKING FOR MULTIPLE SNAKES
         //Make checkBody work (for ai and hit detection)
         for (Snake snake : snakes)
         {
-            if (snake != this)
+            for (Point body : snake.bodyCoords.subList(1, snake.bodyCoords.size()))
             {
-                for (Point body : snake.bodyCoords)
+                if (body.equals(head))
                 {
-                    if (body.equals(head))
-                    {
-                        alive = false;
-                    }
+                    this.alive = false;
+                    System.out.println("Ded");
                 }
             }
         }
@@ -162,6 +170,20 @@ public class Snake {
      */
     public boolean checkBody(Point point, String[][] map)
     {
-            return "body".equals(map[(int) point.getX()][(int) point.getY()].substring(1, 6).trim());
+        try
+        {
+            switch (grid[point.x][point.y].substring(1, 6).trim())
+            {
+                case "body":
+                    return true;
+                case "head":
+                    return true;
+                default:
+                    return false;
+            }
+        }catch(ArrayIndexOutOfBoundsException AIOOBE)
+        {
+            return true;
+        }
     }
 }
