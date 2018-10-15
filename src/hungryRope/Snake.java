@@ -63,7 +63,13 @@ public class Snake {
     public void aiMove()
     {
         //Primary objective
-        direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
+        if (direction.axis == 'y')
+        {
+            direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
+        }else
+        {
+            direction.axis = head.getX() != food.getX() ? 'x' : head.getY() != food.getY() ? 'y' : ' ';
+        }
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         //Detours that navigate body parts
         swapDirection();
@@ -143,7 +149,6 @@ public class Snake {
                 if (body.equals(head))
                 {
                     this.alive = false;
-                    System.out.println("Ded");
                 }
             }
         }
