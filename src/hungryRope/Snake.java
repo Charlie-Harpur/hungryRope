@@ -43,7 +43,7 @@ public class Snake {
         if (aiStatus) this.direction = new Direction('x', 1);
         else this.direction = new Direction(' ', 0);
         bodyCoords = new ArrayList();
-        bodyCoords.add(new Point (random(4, width - 4), random(4, height - 4)));
+        bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
     }
     
     /**
@@ -68,7 +68,7 @@ public class Snake {
 
         if (checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid))
         {
-            System.out.println("po");
+            //System.out.println("po");
         }
     }
 
@@ -115,7 +115,7 @@ public class Snake {
         if (bodyCoords.get(0).equals(food))
         {
             score += 3;
-            food = new Point (random(0, width), random(0, height));
+            food = new Point (random(0, WIDTH), random(0, HEIGHT));
         }
     }
 
@@ -124,11 +124,20 @@ public class Snake {
      */
     public void checkHit()
     {
-        //Make better later
-        //Checks if the bodyCoords head has hit any part of the body
-        for (int i = 1; i < bodyCoords.size(); i++)
-        {//Checks to see if the head ran into a part of the body
-            if (bodyCoords.get(i).equals(bodyCoords.get(0))) alive = false;
+        //NOT WORKING FOR MULTIPLE SNAKES
+        //Make checkBody work (for ai and hit detection)
+        for (Snake snake : snakes)
+        {
+            if (snake != this)
+            {
+                for (Point body : snake.bodyCoords)
+                {
+                    if (body.equals(head))
+                    {
+                        alive = false;
+                    }
+                }
+            }
         }
     }
     

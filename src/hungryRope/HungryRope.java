@@ -18,12 +18,12 @@ import javax.swing.ImageIcon;
  */
 public class HungryRope extends javax.swing.JFrame {
     boolean snakesAlive, pause = false;
-    final static int width = 75, height = 35, gridSize = 15;
+    final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
     int difficulty;
-    static String[][] grid = new String[width][height];
+    static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea;
     static Point food;
-    Snake[] snakes = new Snake[1];
+    static Snake[] snakes = new Snake[2];
     GameThread game = new GameThread();
     
     /**
@@ -203,6 +203,7 @@ public class HungryRope extends javax.swing.JFrame {
 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
         snakes[0] = new Snake(150, 0, 150, true);
+        snakes[1] = new Snake(150, 0, 150, true);
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
@@ -213,17 +214,17 @@ public class HungryRope extends javax.swing.JFrame {
         try
         {
             difficulty = Integer.parseInt(fieldDifficulty.getText());
-            food = new Point (random(0, width), random(0, height));
+            food = new Point (random(0, WIDTH), random(0, HEIGHT));
 
             changeVisible(false);
 
             buttonStart.setText("Restart?");
             buttonStart.setVisible(false);
 
-            playArea = new BufferedImage(width * gridSize, height * gridSize, BufferedImage.TYPE_INT_RGB);
-            for (int x = 0; x < width * gridSize; x++)
+            playArea = new BufferedImage(WIDTH * GRIDSIZE, HEIGHT * GRIDSIZE, BufferedImage.TYPE_INT_RGB);
+            for (int x = 0; x < WIDTH * GRIDSIZE; x++)
             {//Clears image used as playArea
-                for (int y = 0; y < height * gridSize; y++)
+                for (int y = 0; y < HEIGHT * GRIDSIZE; y++)
                 {
                     playArea.setRGB(x, y, getARGB(new Color (0, 0, 255)));
                 }
@@ -369,18 +370,18 @@ public class HungryRope extends javax.swing.JFrame {
         }
         
         /**
-         * Sets pixel colour for a rectangle({@code startX} * {@code gridSize}, {@code startY} * {@code gridSize}, {@code startX} + {@code gridSize},
-         * {@code startY} + {@code gridSize}) on {@code playArea}
+         * Sets pixel colour for a rectangle({@code startX} * {@code GRIDSIZE}, {@code startY} * {@code GRIDSIZE}, {@code startX} + {@code GRIDSIZE},
+         * {@code startY} + {@code GRIDSIZE}) on {@code playArea}
          * @param startX Starting x coordinate
          * @param startY Starting y coordinate
          * @param colour Colour for square
          */
         public void colourSquare(int startX, int startY, Color colour)
         {
-            startX *= gridSize;
-            startY *= gridSize;
-            int endX = startX + gridSize;
-            int endY = startY + gridSize;
+            startX *= GRIDSIZE;
+            startY *= GRIDSIZE;
+            int endX = startX + GRIDSIZE;
+            int endY = startY + GRIDSIZE;
             for (int x = startX; x < endX; x++)
             {
                 for (int y = startY; y < endY; y++)
