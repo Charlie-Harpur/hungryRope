@@ -394,29 +394,6 @@ public class HungryRope extends javax.swing.JFrame {
         }
         
         /**
-         * Gets and element of an array using coordinates {@code onAxis} and {@code offAxis} in {@code array}
-         * <p>
-         * This is useful for more flexible addition when using a {@link Direction} to add to a specific coordinate
-         * @param axis Axis for first coordinate
-         * @param onAxis Coordinate on the {@code axis} axis
-         * @param offAxis Coordinate not on the {@code axis} axis
-         * @param array Array to retrieve from
-         * @return (when {@code axis} = 'x') {@code  array}[{@code onAxis}][{@code offAxis}] and (when {@code axis} = 'y') {@code array}[{@code offAxis}][{@code onAxis}]
-         */
-        public String getElementAt(char axis, int onAxis, int offAxis, String[][] array)
-        {
-            String nextSquare;
-            try
-            {
-                nextSquare = axis == 'x' ? array[onAxis][offAxis] : array[offAxis][onAxis];
-            }catch (ArrayIndexOutOfBoundsException offSide)
-            {//If the nextSquare is an edge
-                nextSquare = "edge";
-            }
-            return nextSquare;
-        }
-        
-        /**
          * Sleeps for {@code millis} milliseconds
          * @param millis Milliseconds to sleep
          */
@@ -430,6 +407,28 @@ public class HungryRope extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Gets and element of an array using coordinates {@code onAxis} and {@code offAxis} in {@code array}
+     * <p>
+     * This is useful for more flexible addition when using a {@link Direction} to add to a specific coordinate
+     * @param axis Axis for first coordinate
+     * @param onAxis Coordinate on the {@code axis} axis
+     * @param offAxis Coordinate not on the {@code axis} axis
+     * @param array Array to retrieve from
+     * @return (when {@code axis} = 'x') {@code  array}[{@code onAxis}][{@code offAxis}] and (when {@code axis} = 'y') {@code array}[{@code offAxis}][{@code onAxis}]
+     */
+    public static String getElementAt(char axis, int onAxis, int offAxis, String[][] array)
+    {
+        String nextSquare;
+        try
+        {
+            nextSquare = axis == 'x' ? array[onAxis][offAxis] : array[offAxis][onAxis];
+        }catch (ArrayIndexOutOfBoundsException offSide)
+        {//If the nextSquare is an edge
+            nextSquare = "edge";
+        }
+        return nextSquare;
+    }
     
     /**
      * Returns a coordinate of {@code point} depending on the {@code axis}

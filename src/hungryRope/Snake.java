@@ -96,6 +96,12 @@ public class Snake {
     {
         return checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid);
     }
+    
+    public boolean checkDirection(Point point, Direction direction)
+    {
+        String[] gridLine = direction.axis == "x" ? grid
+        for (int i = getCoord(point, direction.axis); i > dimension)
+    }
 
     /**
      * Moves the snake and its and its body Point {@link Direction} along the grid
