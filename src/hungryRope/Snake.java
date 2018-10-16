@@ -63,28 +63,33 @@ public class Snake {
     public void aiMove()
     {
         //Primary objective
-        if (direction.axis == 'y')
-        {
+//        if (direction.axis == 'y')
+//        {
             direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
-        }else
-        {
-            direction.axis = head.getX() != food.getX() ? 'x' : head.getY() != food.getY() ? 'y' : ' ';
-        }
+//        }else
+//        {
+//            direction.axis = head.getX() != food.getX() ? 'x' : head.getY() != food.getY() ? 'y' : ' ';
+//        }
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         //Detours that navigate body parts
-        swapDirection();
-    }
-    
-    public void swapDirection()
-    {
-        if (checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid))
+        if (nextCoordBody())
         {
             direction.axis = notAxis(direction.axis);
         }
-        if (checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid))
+        
+        if (nextCoordBody())
         {
             direction.posOrNeg *= -1;
         }
+    }
+    
+    /**
+     * Checks if the next place the Snake will be is a body part of any Snake
+     * @return True if the next coordinate is a body
+     */
+    public boolean nextCoordBody()
+    {
+        return checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid);
     }
 
     /**
