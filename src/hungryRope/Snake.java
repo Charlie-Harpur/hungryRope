@@ -62,25 +62,30 @@ public class Snake {
      */
     public void aiMove()
     {
-        //Primary objective
-//        if (direction.axis == 'y')
-//        {
-            direction.axis = head.getY() != food.getY() ? 'y' : head.getX() != food.getX() ? 'x' : ' ';
-//        }else
-//        {
-//            direction.axis = head.getX() != food.getX() ? 'x' : head.getY() != food.getY() ? 'y' : ' ';
-//        }
+        //Primary Objective
+        direction.axis = head.y != food.y ? 'y' : head.x != food.x ? 'x' : ' ';
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         //Detours that navigate body parts
         if (nextCoordBody())
         {
             direction.axis = notAxis(direction.axis);
+            direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
         }
         
         if (nextCoordBody())
         {
             direction.posOrNeg *= -1;
+            if (nextCoordBody())
+            {
+                direction.axis = notAxis(direction.axis);
+                direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) * -1 : direction.posOrNeg;
+            }
         }
+    }
+    
+    public int getFoodDirection(char axis)
+    {
+        return getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
     }
     
     /**
@@ -115,10 +120,10 @@ public class Snake {
 
         if (direction.axis == 'y')
         {//Moves the bodyCoords head forwards if the direction is +2 or -2 it moves along y axis otherwise it moves along x
-            bodyCoords.set(0, new Point ((int) prevHead.getX(), (int) prevHead.getY() + direction.posOrNeg));
+            bodyCoords.set(0, new Point ((int) prevHead.x, (int) prevHead.getY() + direction.posOrNeg));
         }else if (direction.axis == 'x')
         {
-            bodyCoords.set(0, new Point ((int) prevHead.getX() + direction.posOrNeg, (int) prevHead.getY()));
+            bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
         }
         
         head = bodyCoords.get(0);
@@ -137,8 +142,26 @@ public class Snake {
         if (bodyCoords.get(0).equals(food))
         {
             score += 3;
-            food = new Point (random(0, WIDTH), random(0, HEIGHT));
+            do
+            {
+                food = new Point (random(0, WIDTH), random(0, HEIGHT));
+            }while (foodOnBody());
         }
+    }
+    
+    public boolean foodOnBody()
+    {
+        for (Snake snake : snakes)
+        {
+            for (Point bodyCoord : snake.bodyCoords)
+            {
+                if (bodyCoord.equals(food))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -149,9 +172,9 @@ public class Snake {
         //Make checkBody work (for ai and hit detection)
         for (Snake snake : snakes)
         {
-            for (Point body : snake.bodyCoords.subList(1, snake.bodyCoords.size()))
+            for (int i = !snake.equals(this) ? 0 : 1; i < snake.bodyCoords.size(); i++)
             {
-                if (body.equals(head))
+                if (snake.bodyCoords.get(i).equals(head))
                 {
                     this.alive = false;
                 }
