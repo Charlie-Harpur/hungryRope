@@ -71,10 +71,8 @@ public class Snake {
 //            direction.axis = notAxis(direction.axis);
 //            direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
 //        }
-        if (nextCoordBody())
-        {
-            direction = longestDirection();
-        }
+        
+        if (nextCoordBody()) direction = longestDirection();
     }
     
     public int getFoodDirection(char axis)
@@ -93,13 +91,13 @@ public class Snake {
     
     public Direction longestDirection()
     {
-        Direction longestDirection = new Direction ('x', -1);
+        Direction longestDirection = new Direction (' ', 0);
         Direction[] directions = new Direction[4];
         int i = 0, longestDirectionNum = 0;
-        char axis = 'x';
+        char axis = this.direction.axis;
         for (int axisNum = 0; axisNum < 2; axisNum++)
         {
-            for (int posOrNeg = -1; posOrNeg < 2; posOrNeg += 2)
+            for (int posOrNeg = 1; posOrNeg >= -1; posOrNeg -= 2)
             {
                 directions[i] = new Direction(axis, posOrNeg);
                 i++;
@@ -120,13 +118,12 @@ public class Snake {
     public int checkDirection(Point point, Direction direction)
     {
         int dimension = direction.posOrNeg == 1 ? direction.axis == 'x' ? WIDTH - 1 : HEIGHT - 1 : 0, distance = 0;
-        for (int i = getCoord(direction.axis, point) + direction.posOrNeg; i >= dimension; i += direction.posOrNeg)
+        for (int i = getCoord(direction.axis, point) + direction.posOrNeg; (i >= dimension && direction.posOrNeg == -1) || (i < dimension && direction.posOrNeg == 1); i += direction.posOrNeg)
         {
             distance = direction.posOrNeg > 0 ? i - getCoord(direction.axis, point) : getCoord(direction.axis, point) - i;
             if (checkBody(makePoint(direction.axis, i, getCoord(notAxis(direction.axis), point))))
                 break;
         }
-        System.out.println(point.x + ", " + point.y + " " + direction.axis + "   " + distance);
         return distance;
     }
 
