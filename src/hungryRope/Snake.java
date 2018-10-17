@@ -71,15 +71,9 @@ public class Snake {
             direction.axis = notAxis(direction.axis);
             direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
         }
-        
         if (nextCoordBody())
         {
-            direction.posOrNeg *= -1;
-            if (nextCoordBody())
-            {
-                direction.axis = notAxis(direction.axis);
-                direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) * -1 : direction.posOrNeg;
-            }
+            direction = longestDirection();
         }
     }
     
@@ -94,13 +88,46 @@ public class Snake {
      */
     public boolean nextCoordBody()
     {
-        return checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)), grid);
+        return checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)));
     }
     
-    public boolean checkDirection(Point point, Direction direction)
+    public Direction longestDirection()
     {
-        String[] gridLine = direction.axis == "x" ? grid
-        for (int i = getCoord(point, direction.axis); i > dimension)
+        Direction longestDirection = new Direction ('x', -1);
+        Direction[] directions = new Direction[4];
+        int i = 0, longestDirectionNum = 0;
+        char axis = 'x';
+        for (int axisNum = 0; axisNum < 2; axisNum++)
+        {
+            for (int posOrNeg = -1; posOrNeg < 2; posOrNeg += 2)
+            {
+                directions[i] = new Direction(axis, posOrNeg);
+                i++;
+            }
+            axis = notAxis(axis);
+        }
+        for (Direction orthDirection : directions)
+        {
+            if (checkDirection(head, orthDirection) > longestDirectionNum)
+            {
+                longestDirectionNum = checkDirection(head, orthDirection);
+                longestDirection = orthDirection;
+            }
+        }
+        return longestDirection;
+    }
+    
+    public int checkDirection(Point point, Direction direction)
+    {
+        int dimension = direction.posOrNeg == 1 ? direction.axis == 'x' ? WIDTH - 1 : HEIGHT - 1 : 0, distance = 0;
+        for (int i = getCoord(direction.axis, point) + direction.posOrNeg; i >= dimension; i += direction.posOrNeg)
+        {
+            distance = direction.posOrNeg > 0 ? i - getCoord(direction.axis, point) : getCoord(direction.axis, point) - i;
+            if (checkBody(makePoint(direction.axis, i, getCoord(notAxis(direction.axis), point))))
+                break;
+        }
+        System.out.println(point.x + ", " + point.y + " " + direction.axis + "   " + distance);
+        return distance;
     }
 
     /**
@@ -204,10 +231,9 @@ public class Snake {
     /**
      * Checks for "body" at {@code point}
      * @param point Point on {@code map}
-     * @param map Map to look through
      * @return True if at {@code point} on {@code map} contains "body"
      */
-    public boolean checkBody(Point point, String[][] map)
+    public boolean checkBody(Point point)
     {
         try
         {
