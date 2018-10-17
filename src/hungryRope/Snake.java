@@ -66,11 +66,11 @@ public class Snake {
         direction.axis = head.y != food.y ? 'y' : head.x != food.x ? 'x' : ' ';
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         //Detours that navigate body parts
-        if (nextCoordBody())
-        {
-            direction.axis = notAxis(direction.axis);
-            direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
-        }
+//        if (nextCoordBody())
+//        {
+//            direction.axis = notAxis(direction.axis);
+//            direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
+//        }
         if (nextCoordBody())
         {
             direction = longestDirection();
