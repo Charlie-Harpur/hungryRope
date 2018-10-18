@@ -23,7 +23,7 @@ public class HungryRope extends javax.swing.JFrame {
     static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea;
     static Point food;
-    static Snake[] snakes = new Snake[2];
+    static Snake[] snakes = new Snake[1];
     GameThread game = new GameThread();
     
     /**
@@ -203,7 +203,6 @@ public class HungryRope extends javax.swing.JFrame {
 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
         snakes[0] = new Snake(0, 150, 0, true);
-        snakes[1] = new Snake(150, 0, 0, true);
 //        snakes[1] = new Snake(150, 0, 150, true);
 //        snakes[2] = new Snake(0, 0, 0, true);
 //        snakes[3] = new Snake(150, 150, 150, true);
