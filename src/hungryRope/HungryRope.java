@@ -6,6 +6,7 @@ package hungryRope;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import static java.lang.Character.toLowerCase;
 import java.util.logging.Level;
@@ -186,21 +187,21 @@ public class HungryRope extends javax.swing.JFrame {
     private void keyInputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyInputKeyTyped
         char keyTyped = toLowerCase(evt.getKeyChar());
         
-        if (keyTyped == 'w'  && (!snakes[0].prevDirection.equals(new Direction ('y', 1)) || snakes[0].score == 1))
+        if ((evt.getKeyCode() == KeyEvent.VK_UP || keyTyped == 'w')  && (!snakes[0].prevDirection.equals(new Direction ('y', 1)) || snakes[0].score == 1))
         {//Checks key and prevents snake from going in on itself
             snakes[0].direction = new Direction ('y', -1);
-        }else if (keyTyped == 's' && (!snakes[0].prevDirection.equals(new Direction ('y', -1)) || snakes[0].score == 1))
+        }else if ((evt.getKeyCode() == KeyEvent.VK_DOWN || keyTyped == 's') && (!snakes[0].prevDirection.equals(new Direction ('y', -1)) || snakes[0].score == 1))
         {
             snakes[0].direction = new Direction ('y', 1);
-        }else if (keyTyped == 'a' && (!snakes[0].prevDirection.equals(new Direction ('x', 1)) || snakes[0].score == 1))
+        }else if ((evt.getKeyCode() == KeyEvent.VK_LEFT || keyTyped == 'a') && (!snakes[0].prevDirection.equals(new Direction ('x', 1)) || snakes[0].score == 1))
         {
             snakes[0].direction = new Direction ('x', -1);
-        }else if (keyTyped == 'd' && (!snakes[0].prevDirection.equals(new Direction ('x', -1)) || snakes[0].score == 1))
+        }else if ((evt.getKeyCode() == KeyEvent.VK_RIGHT || keyTyped == 'd') && (!snakes[0].prevDirection.equals(new Direction ('x', -1)) || snakes[0].score == 1))
         {
             snakes[0].direction = new Direction ('x', 1);
         }
     }//GEN-LAST:event_keyInputKeyTyped
-
+ 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
         snakes[0] = new Snake(0, 150, 0, true);
         startGame();

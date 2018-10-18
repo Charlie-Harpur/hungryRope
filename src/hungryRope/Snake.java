@@ -101,25 +101,19 @@ public class Snake {
     public Direction longestDirection()
     {
         Direction longestDirection = new Direction (' ', 0);
-        Direction[] directions = new Direction[4];
-        int i = 0, longestDirectionNum = 0;
+        int longestDirectionNum = 0;
         char axis = this.direction.axis;
         for (int axisNum = 0; axisNum < 2; axisNum++)
         {
             for (int posOrNeg = 1; posOrNeg >= -1; posOrNeg -= 2)
             {
-                directions[i] = new Direction(axis, posOrNeg);
-                i++;
+                if (checkDirection(head, new Direction(axis, posOrNeg)) > longestDirectionNum)
+                {
+                    longestDirectionNum = checkDirection(head, new Direction(axis, posOrNeg));
+                    longestDirection = new Direction(axis, posOrNeg);
+                }
             }
             axis = notAxis(axis);
-        }
-        for (Direction orthDirection : directions)
-        {
-            if (checkDirection(head, orthDirection) > longestDirectionNum)
-            {
-                longestDirectionNum = checkDirection(head, orthDirection);
-                longestDirection = orthDirection;
-            }
         }
         return longestDirection;
     }
