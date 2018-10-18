@@ -75,6 +75,11 @@ public class Snake {
         if (nextCoordBody()) direction = longestDirection();
     }
     
+    /**
+     * Gets the positive or negative movement along an axis for the head to get to the food
+     * @param axis The axis to check
+     * @return Direction along axis the head must move to get to the food
+     */
     public int getFoodDirection(char axis)
     {
         return getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
@@ -89,6 +94,10 @@ public class Snake {
         return checkBody(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)));
     }
     
+    /**
+     * Finds the furthest orthogonal direction the snake can safely travel
+     * @return Furthest {@link Direction} the snake can travel
+     */
     public Direction longestDirection()
     {
         Direction longestDirection = new Direction (' ', 0);
@@ -115,6 +124,12 @@ public class Snake {
         return longestDirection;
     }
     
+    /**
+     * Finds how far the Snake can safely travel in that {@link Direction}
+     * @param point Point to checkDirection from
+     * @param direction {@link Direction} to check length
+     * @return length the Snake can safely travel in that {@link Direction}
+     */
     public int checkDirection(Point point, Direction direction)
     {
         int dimension = direction.posOrNeg == 1 ? direction.axis == 'x' ? WIDTH - 1 : HEIGHT - 1 : 0, distance = 0;
@@ -179,6 +194,10 @@ public class Snake {
         }
     }
     
+    /**
+     * Checks if the food coordinates are on a body part to prevent the food from spawning on a snake
+     * @return True if food coordinates are on a body part
+     */
     public boolean foodOnBody()
     {
         for (Snake snake : snakes)

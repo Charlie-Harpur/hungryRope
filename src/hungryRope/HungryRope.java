@@ -203,9 +203,6 @@ public class HungryRope extends javax.swing.JFrame {
 
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
         snakes[0] = new Snake(0, 150, 0, true);
-//        snakes[1] = new Snake(150, 0, 150, true);
-//        snakes[2] = new Snake(0, 0, 0, true);
-//        snakes[3] = new Snake(150, 150, 150, true);
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
@@ -273,8 +270,10 @@ public class HungryRope extends javax.swing.JFrame {
                 paintScreen();
                 sleep(difficulty);
             }while (snakesAlive);
-            buttonStart.setVisible(true);
-            changeVisible(true);
+            snakes[0] = new Snake(0, 150, 0, true);
+        startGame();
+            //buttonStart.setVisible(true);
+            //changeVisible(true);
         }
         
         /*
