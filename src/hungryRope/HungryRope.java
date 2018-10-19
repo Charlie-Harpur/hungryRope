@@ -1,5 +1,6 @@
 /*
  * FIX AI
+ * 19/10/2018 Highscore of AI 289
  */
 
 package hungryRope;
@@ -287,7 +288,7 @@ public class HungryRope extends javax.swing.JFrame {
                 {
                     if (snake.alive) snake.move();
                     snakesAlive = snakesAlive ? true : snake.alive;
-                    //if(snake.score > highScore && snake.score > 200) thisHighScore = true;
+                    if(snake.score > highScore && snake.score > 200) thisHighScore = true;
                 }
                 updateGrid();
                 if (!test || thisHighScore)
@@ -320,6 +321,8 @@ public class HungryRope extends javax.swing.JFrame {
             }else
             {
                 test = false;
+                scores.clear();
+                highScore = 0;
                 buttonStart.setVisible(true);
                 changeVisible(true);
             }
