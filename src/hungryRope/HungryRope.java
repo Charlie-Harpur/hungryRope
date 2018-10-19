@@ -9,6 +9,7 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import static java.lang.Character.toLowerCase;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -18,13 +19,14 @@ import javax.swing.ImageIcon;
  * @author chhar9972
  */
 public class HungryRope extends javax.swing.JFrame {
-    boolean snakesAlive, pause = false;
+    boolean snakesAlive, pause = false, test = false, thisHighScore = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
-    int difficulty;
+    int difficulty, highScore = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea;
     static Point food;
     static Snake[] snakes = new Snake[1];
+    ArrayList<Integer> scores = new ArrayList();
     GameThread game = new GameThread();
     
     /**
@@ -57,6 +59,7 @@ public class HungryRope extends javax.swing.JFrame {
         labelDifficulty = new javax.swing.JLabel();
         labelMS = new javax.swing.JLabel();
         AIStart = new javax.swing.JButton();
+        buttonTestAI = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
@@ -112,6 +115,13 @@ public class HungryRope extends javax.swing.JFrame {
             }
         });
 
+        buttonTestAI.setText("Test AI");
+        buttonTestAI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonTestAIActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundLayout = new javax.swing.GroupLayout(background);
         background.setLayout(backgroundLayout);
         backgroundLayout.setHorizontalGroup(
@@ -127,7 +137,9 @@ public class HungryRope extends javax.swing.JFrame {
                         .addComponent(buttonStart)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(AIStart)
-                        .addGap(124, 124, 124)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonTestAI)
+                        .addGap(45, 45, 45)
                         .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(46, 46, 46)
                         .addComponent(labelDifficulty)
@@ -135,7 +147,7 @@ public class HungryRope extends javax.swing.JFrame {
                         .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelMS)
-                        .addGap(0, 540, Short.MAX_VALUE))
+                        .addGap(0, 546, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,7 +167,8 @@ public class HungryRope extends javax.swing.JFrame {
                         .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(labelDifficulty)
                         .addComponent(labelMS)
-                        .addComponent(AIStart))
+                        .addComponent(AIStart)
+                        .addComponent(buttonTestAI))
                     .addComponent(title))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 558, Short.MAX_VALUE)
                 .addComponent(iconPlayArea)
@@ -208,6 +221,13 @@ public class HungryRope extends javax.swing.JFrame {
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
 
+    private void buttonTestAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestAIActionPerformed
+        snakes[0] = new Snake(0, 150, 0, true);
+        test = true;
+        startGame();
+        labelScore.setVisible(true);
+    }//GEN-LAST:event_buttonTestAIActionPerformed
+
     public void startGame()
     {
         //Resets game variables and starts game thread
@@ -243,6 +263,7 @@ public class HungryRope extends javax.swing.JFrame {
         //Changes visibility of start screen
         youDied.setVisible(see);
         AIStart.setVisible(see);
+        buttonTestAI.setVisible(see);
         fieldDifficulty.setVisible(see);
         labelDifficulty.setVisible(see);
         labelMS.setVisible(see);
@@ -266,15 +287,42 @@ public class HungryRope extends javax.swing.JFrame {
                 {
                     if (snake.alive) snake.move();
                     snakesAlive = snakesAlive ? true : snake.alive;
+                    //if(snake.score > highScore && snake.score > 200) thisHighScore = true;
                 }
                 updateGrid();
-                paintScreen();
-                sleep(difficulty);
+                if (!test || thisHighScore)
+                {
+                    paintScreen();
+                    sleep(difficulty);
+                }
             }while (snakesAlive);
-            snakes[0] = new Snake(0, 150, 0, true);
-        startGame();
-            //buttonStart.setVisible(true);
-            //changeVisible(true);
+            
+            scores.add(snakes[0].score);
+            
+            double averageScore = 0;
+            for(int score : scores)
+            {
+                if (score > highScore) 
+                {
+                    highScore = score;
+                }
+                averageScore += score;
+            }
+            averageScore = (int)(averageScore / scores.size() * 100);
+            averageScore /= 100;
+            System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
+                    "  Highscore: " + highScore);
+            thisHighScore = false;
+            if (scores.size() < 1000 && test)
+            {
+                snakes[0] = new Snake(0, 150, 0, true);
+                startGame();
+            }else
+            {
+                test = false;
+                buttonStart.setVisible(true);
+                changeVisible(true);
+            }
         }
         
         /*
@@ -514,6 +562,7 @@ public class HungryRope extends javax.swing.JFrame {
     private javax.swing.JButton AIStart;
     private javax.swing.JPanel background;
     private javax.swing.JButton buttonStart;
+    private javax.swing.JButton buttonTestAI;
     private javax.swing.JTextField fieldDifficulty;
     private javax.swing.JLabel iconPlayArea;
     private javax.swing.JTextField keyInput;

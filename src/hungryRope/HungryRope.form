@@ -59,7 +59,9 @@
                           <Component id="buttonStart" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="AIStart" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="buttonTestAI" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                           <Component id="keyInput" min="-2" pref="0" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                           <Component id="labelDifficulty" min="-2" max="-2" attributes="0"/>
@@ -67,7 +69,7 @@
                           <Component id="fieldDifficulty" min="-2" pref="130" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="labelMS" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="540" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="546" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -94,6 +96,7 @@
                           <Component id="labelDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="labelMS" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="AIStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="buttonTestAI" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="title" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -186,6 +189,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AIStartActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="buttonTestAI">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Test AI"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonTestAIActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
