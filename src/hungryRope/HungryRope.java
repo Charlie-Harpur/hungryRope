@@ -1,6 +1,6 @@
 /*
  * FIX AI
- * 19/10/2018 Highscore of AI 289
+ * 20/10/2018 Highscore of AI 298
  */
 
 package hungryRope;
@@ -22,7 +22,7 @@ import javax.swing.ImageIcon;
 public class HungryRope extends javax.swing.JFrame {
     boolean snakesAlive, pause = false, test = false, thisHighScore = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
-    int difficulty, highScore = 0;
+    int difficulty, repeats, highScore = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea;
     static Point food;
@@ -234,7 +234,8 @@ public class HungryRope extends javax.swing.JFrame {
         //Resets game variables and starts game thread
         try
         {
-            difficulty = Integer.parseInt(fieldDifficulty.getText());
+            difficulty = test ? 0 : Integer.parseInt(fieldDifficulty.getText());
+            repeats = Integer.parseInt(fieldDifficulty.getText());
             food = new Point (random(0, WIDTH), random(0, HEIGHT));
 
             changeVisible(false);
@@ -288,7 +289,7 @@ public class HungryRope extends javax.swing.JFrame {
                 {
                     if (snake.alive) snake.move();
                     snakesAlive = snakesAlive ? true : snake.alive;
-                    if(snake.score > highScore && snake.score > 200) thisHighScore = true;
+                    //if(snake.score > highScore && snake.score > 200) thisHighScore = true;
                 }
                 updateGrid();
                 if (!test || thisHighScore)
@@ -314,7 +315,7 @@ public class HungryRope extends javax.swing.JFrame {
             System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
                     "  Highscore: " + highScore);
             thisHighScore = false;
-            if (scores.size() < 1000 && test)
+            if (scores.size() < repeats && test)
             {
                 snakes[0] = new Snake(0, 150, 0, true);
                 startGame();

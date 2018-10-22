@@ -63,14 +63,19 @@ public class Snake {
     public void aiMove()
     {
         //Primary Objective
-        //if (direction.axis == 'y')
-        //{
+        if (direction.axis == 'y')
+        {
             direction.axis = head.y != food.y ? 'y' : head.x != food.x ? 'x' : ' ';
-        //}else
-        //{
-        //    direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
-        //}
+        }else
+        {
+           direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
+        }
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
+        if(nextCoordBody())
+        {
+            direction.axis = notAxis(direction.axis) != getCoord(notAxis(direction.axis), food) ? notAxis(direction.axis) : direction.axis;
+            direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
+        }
         //Detours that navigate body parts
         if (nextCoordBody() && (getFoodDirection(notAxis(direction.axis)) != 0))
         {
