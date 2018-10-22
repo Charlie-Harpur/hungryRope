@@ -6,10 +6,17 @@
 package hungryRope;
 
 import java.awt.Color;
+import java.awt.List;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import static java.lang.Character.toLowerCase;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +27,7 @@ import javax.swing.ImageIcon;
  * @author chhar9972
  */
 public class HungryRope extends javax.swing.JFrame {
-    boolean snakesAlive, pause = false, test = false, thisHighScore = false;
+    boolean snakesAlive, pause = false, test = false, replaying = true, thisHighScore = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
     int difficulty, repeats, highScore = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
@@ -28,6 +35,7 @@ public class HungryRope extends javax.swing.JFrame {
     static Point food;
     static Snake[] snakes = new Snake[1];
     ArrayList<Integer> scores = new ArrayList();
+    ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
     /**
@@ -281,72 +289,82 @@ public class HungryRope extends javax.swing.JFrame {
         @Override
         public void run()
         {
-            updateGrid();
-            do
+            if (!replaying)
             {
-                snakesAlive = false;
-                for (Snake snake : snakes) 
-                {
-                    if (snake.alive) snake.move();
-                    snakesAlive = snakesAlive ? true : snake.alive;
-                    //if(snake.score > highScore && snake.score > 200) thisHighScore = true;
-                }
                 updateGrid();
-                if (!test || thisHighScore)
+                do
                 {
+                    snakesAlive = false;
+                    for (Snake snake : snakes) 
+                    {
+                        if (snake.alive) snake.move();
+                        snakesAlive = snakesAlive ? true : snake.alive;
+                        //if(snake.score > highScore && snake.score > 200) thisHighScore = true;
+                    }
+                    updateGrid();
+                    if (!test || thisHighScore)
+                    {
+                        paintScreen();
+                        sleep(difficulty);
+                    }
+                }while (snakesAlive);
+
+                scores.add(snakes[0].score);
+
+                double averageScore = 0;
+                for(int score : scores)
+                {
+                    if (score > highScore) 
+                    {
+                        highScore = score;
+                        writeReplayToFile();
+                    }
+                    averageScore += score;
+                }
+
+                replay.clear();
+
+                averageScore = (int)(averageScore / scores.size() * 100);
+                averageScore /= 100;
+                System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
+                        "  Highscore: " + highScore);
+                thisHighScore = false;
+                if (scores.size() < repeats && test)
+                {
+                    snakes[0] = new Snake(0, 150, 0, true);
+                    startGame();
+                }else
+                {
+                    
+                }
+            }else
+            {
+                while(replaying)
+                {
+                    int i = 0;
+                    for (int x = 0; x < WIDTH; x++)
+                    {
+                        for (int y = 0; y < HEIGHT; y++)
+                        {
+                            try {
+                                grid[x][y] = readFileLine(i);
+                            } catch (IOException ex) {
+                                replaying = false;
+                                test = false;
+                                scores.clear();
+                                highScore = 0;
+                                buttonStart.setVisible(true);
+                                changeVisible(true);;
+                            }
+                            i++;
+                        }
+                    }
+
                     paintScreen();
                     sleep(difficulty);
                 }
-            }while (snakesAlive);
-            
-            scores.add(snakes[0].score);
-            
-            double averageScore = 0;
-            for(int score : scores)
-            {
-                if (score > highScore) 
-                {
-                    highScore = score;
-                }
-                averageScore += score;
-            }
-            averageScore = (int)(averageScore / scores.size() * 100);
-            averageScore /= 100;
-            System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
-                    "  Highscore: " + highScore);
-            thisHighScore = false;
-            if (scores.size() < repeats && test)
-            {
-                snakes[0] = new Snake(0, 150, 0, true);
-                startGame();
-            }else
-            {
-                test = false;
-                scores.clear();
-                highScore = 0;
-                buttonStart.setVisible(true);
-                changeVisible(true);
             }
         }
-        
-        /*
-        public boolean checkDirection(int posOrNeg, char axis, int distance)
-        {
-            int eta, headCoord = getCoord(axis, head);
-            boolean fail = false;
-            for (int changingCoord = headCoord; changingCoord != headCoord + distance; changingCoord += posOrNeg)
-            {
-                eta = headCoord < changingCoord ? changingCoord - headCoord : headCoord - changingCoord;// Time to get to that coord
-                String square = getElementAt(axis, headCoord, notAxis(axis, head), grid);
-                if (square.substring(0, 5).trim().equals("body") && getCoord(axis, snake.get(Integer.parseInt(square.substring(6)))) >= eta)
-                {
-                    fail = true;
-                    break;
-                }
-            }
-            return !fail;
-        }
-        */
         
         /**
          * Updates grid array with new head, body, and food coordinates
@@ -354,7 +372,6 @@ public class HungryRope extends javax.swing.JFrame {
         public void updateGrid()
         {
             //Updates grid array with snake and food coords, also checking for the snake hitting the side
-            
             for (int x = 0; x < grid.length; x++)
             {//resets every index in the grid
                 for (int y = 0; y < grid[0].length; y++)
@@ -375,6 +392,16 @@ public class HungryRope extends javax.swing.JFrame {
                 }catch (ArrayIndexOutOfBoundsException offSide)
                 {//If the snake goes offside
                     snakes[snakeIndex].alive = false;
+                }
+            }
+            if (test)
+            {
+                for (int x = 0; x < grid.length; x++)
+                {
+                    for(int y = 0; y < grid[0].length; y++)
+                    {
+                        replay.add(grid[x][y]);
+                    }
                 }
             }
         }
@@ -459,6 +486,40 @@ public class HungryRope extends javax.swing.JFrame {
                 Logger.getLogger(HungryRope.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    /**
+     * Saves all frames of a game to a text file
+     */
+    public void writeReplayToFile()
+    {
+        try {
+            // Open given file in append mode. 
+            BufferedWriter out = new BufferedWriter( 
+                   new FileWriter("gameSave.txt"));
+            for (String line : replay)
+            {
+                out.write(line + "\n");
+            }
+            out.close();
+        } 
+        catch (IOException e) { 
+            System.out.println("exception occoured" + e); 
+        } 
+    }
+    
+    /**
+     * 
+     * @param lineNumber Line to read
+     * @return {@code lineNumber} line
+     * @throws IOException if nonexistant lol
+     */
+    public String readFileLine(int lineNumber) throws IOException
+    {
+        ArrayList<String> replayFile;
+        replayFile = (ArrayList<String>) Files.readAllLines(Paths.get("gameSave.txt"));
+            
+        return replayFile.get(lineNumber);
     }
     
     /**
