@@ -7,7 +7,10 @@ package hungryRope;
 import static hungryRope.HungryRope.*;
 import java.awt.Color;
 import java.awt.Point;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Snake class stores snake data such as {@link bodyCoords}, {@link aiStatus}, {@link headColour},
@@ -31,7 +34,6 @@ public class Snake {
      */
     public Snake(int r, int g, int b, boolean aiStatus)
     {
-        
         this.aiStatus = aiStatus;
         bodyColour = new Color(r, g, b);
         r = r > 0 ? 255 : 0;
@@ -43,7 +45,10 @@ public class Snake {
         if (aiStatus) this.direction = new Direction('x', 1);
         else this.direction = new Direction(' ', 0);
         bodyCoords = new ArrayList();
-        bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
+        if (!replaying)
+        {
+            bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
+        }
     }
     
     /**
@@ -53,7 +58,16 @@ public class Snake {
     {
         head = bodyCoords.get(0);
         if(aiStatus) aiMove();
-        moveSnake();
+        try
+        {
+            moveSnake();
+        }
+        catch(NullPointerException NPE)
+        {
+            replaying = false;
+        } catch (IOException ex) {
+            System.out.println("IOEXCEPTION");
+        }
     }
     
     /**
@@ -152,7 +166,7 @@ public class Snake {
      * also checks if the snake has hit the edges/body parts, and if it's collected food
      * @see Direction
      */
-    public void moveSnake()
+    public void moveSnake() throws NullPointerException, IOException
     {
         //Moves bodyCoords, checks for food collection, and checks if the bodyCoords rammed itself
         Point prevHead = bodyCoords.get(0);
@@ -167,13 +181,18 @@ public class Snake {
         {//Moves the bodyCoords body forwards
             bodyCoords.set(i, bodyCoords.get(i - 1));
         }
-
-        if (direction.axis == 'y')
-        {//Moves the bodyCoords head forwards if the direction is +2 or -2 it moves along y axis otherwise it moves along x
-            bodyCoords.set(0, new Point ((int) prevHead.x, (int) prevHead.getY() + direction.posOrNeg));
-        }else if (direction.axis == 'x')
+        
+        if (replaying)
         {
-            bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
+            bodyCoords.set(0, new Point (readFileLine(frame * 4), readFileLine(frame * 4 + 1)));
+        }else{
+            if (direction.axis == 'y')
+            {//Moves the bodyCoords head forwards if the direction is +2 or -2 it moves along y axis otherwise it moves along x
+                bodyCoords.set(0, new Point ((int) prevHead.x, (int) prevHead.getY() + direction.posOrNeg));
+            }else if (direction.axis == 'x')
+            {
+                bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
+            }
         }
         
         head = bodyCoords.get(0);
@@ -181,21 +200,34 @@ public class Snake {
         checkFood();
 
         checkHit();
+        if (!replaying)
+        {
+            replay.add("" + head.x);
+            replay.add("" + head.y);
+            replay.add("" + food.x);
+            replay.add("" + food.y);
+        }
     }
 
     /**
      * Checks if the head's coordinates equal the food's coordinates
      */
-    public void checkFood()
+    public void checkFood() throws NumberFormatException, IOException
     {
         //Adds to score and changes food if the bodyCoords head is on the food
         if (bodyCoords.get(0).equals(food))
         {
             score += 3;
-            do
+            if (replaying)
             {
-                food = new Point (random(0, WIDTH), random(0, HEIGHT));
-            }while (foodOnBody());
+                food = new Point (readFileLine(frame * 4 + 2), readFileLine(frame * 4 + 3));
+            }else
+            {
+                do
+                {
+                    food = new Point (random(0, WIDTH), random(0, HEIGHT));
+                }while (foodOnBody());
+            }
         }
     }
     

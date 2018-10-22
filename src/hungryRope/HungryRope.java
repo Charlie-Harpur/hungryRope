@@ -6,12 +6,10 @@
 package hungryRope;
 
 import java.awt.Color;
-import java.awt.List;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import static java.lang.Character.toLowerCase;
@@ -27,15 +25,15 @@ import javax.swing.ImageIcon;
  * @author chhar9972
  */
 public class HungryRope extends javax.swing.JFrame {
-    boolean snakesAlive, pause = false, test = false, replaying = true, thisHighScore = false;
+    static boolean snakesAlive, pause = false, test = false, replaying = false, thisHighScore = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
-    int difficulty, repeats, highScore = 0;
+    static int difficulty, repeats, frame, highScore = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea;
     static Point food;
     static Snake[] snakes = new Snake[1];
     ArrayList<Integer> scores = new ArrayList();
-    ArrayList<String> replay = new ArrayList();
+    static ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
     /**
@@ -244,7 +242,10 @@ public class HungryRope extends javax.swing.JFrame {
         {
             difficulty = test ? 0 : Integer.parseInt(fieldDifficulty.getText());
             repeats = Integer.parseInt(fieldDifficulty.getText());
-            food = new Point (random(0, WIDTH), random(0, HEIGHT));
+            if (!replaying)
+            {
+                food = new Point (random(0, WIDTH), random(0, HEIGHT));
+            }
 
             changeVisible(false);
 
@@ -299,7 +300,6 @@ public class HungryRope extends javax.swing.JFrame {
                     {
                         if (snake.alive) snake.move();
                         snakesAlive = snakesAlive ? true : snake.alive;
-                        //if(snake.score > highScore && snake.score > 200) thisHighScore = true;
                     }
                     updateGrid();
                     if (!test || thisHighScore)
@@ -334,34 +334,33 @@ public class HungryRope extends javax.swing.JFrame {
                     snakes[0] = new Snake(0, 150, 0, true);
                     startGame();
                 }else
-                {
-                    
+                {                
+                    test = false;
+                    scores.clear();
+                    highScore = 0;
+                    buttonStart.setVisible(true);
+                    changeVisible(true);
                 }
             }else
             {
+                
+                try {
+                    replay = (ArrayList<String>) Files.readAllLines(Paths.get("gameSave.txt"));
+                    try {
+                        snakes[0].bodyCoords.add(new Point (readFileLine(0), readFileLine(1)));
+                        food = new Point(readFileLine(2), readFileLine(3));
+                    } catch (NumberFormatException ex) {
+                    }
+                } catch (IOException ex) {
+                    System.out.println("ERR");
+                }
                 while(replaying)
                 {
-                    int i = 0;
-                    for (int x = 0; x < WIDTH; x++)
-                    {
-                        for (int y = 0; y < HEIGHT; y++)
-                        {
-                            try {
-                                grid[x][y] = readFileLine(i);
-                            } catch (IOException ex) {
-                                replaying = false;
-                                test = false;
-                                scores.clear();
-                                highScore = 0;
-                                buttonStart.setVisible(true);
-                                changeVisible(true);;
-                            }
-                            i++;
-                        }
-                    }
-
+                    snakes[0].move();
+                    updateGrid();
                     paintScreen();
                     sleep(difficulty);
+                    frame ++;
                 }
             }
         }
@@ -392,16 +391,6 @@ public class HungryRope extends javax.swing.JFrame {
                 }catch (ArrayIndexOutOfBoundsException offSide)
                 {//If the snake goes offside
                     snakes[snakeIndex].alive = false;
-                }
-            }
-            if (test)
-            {
-                for (int x = 0; x < grid.length; x++)
-                {
-                    for(int y = 0; y < grid[0].length; y++)
-                    {
-                        replay.add(grid[x][y]);
-                    }
                 }
             }
         }
@@ -514,12 +503,9 @@ public class HungryRope extends javax.swing.JFrame {
      * @return {@code lineNumber} line
      * @throws IOException if nonexistant lol
      */
-    public String readFileLine(int lineNumber) throws IOException
+    static public int readFileLine(int lineNumber) throws NumberFormatException, IOException
     {
-        ArrayList<String> replayFile;
-        replayFile = (ArrayList<String>) Files.readAllLines(Paths.get("gameSave.txt"));
-            
-        return replayFile.get(lineNumber);
+        return Integer.parseInt(replay.get(lineNumber));
     }
     
     /**
