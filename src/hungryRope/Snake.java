@@ -290,7 +290,7 @@ public class Snake {
     {
         try
         {
-            switch (grid[point.x][point.y].substring(1, 6).trim())
+                switch (grid[point.x][point.y].substring(1, 6).trim())
             {
                 case "body":
                     return true;

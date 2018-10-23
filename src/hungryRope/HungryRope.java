@@ -141,7 +141,6 @@ public class HungryRope extends javax.swing.JFrame {
         });
 
         checkSave.setBackground(new java.awt.Color(255, 255, 255));
-        checkSave.setSelected(true);
         checkSave.setText("Save Replay");
         checkSave.setToolTipText("");
         checkSave.setContentAreaFilled(false);
@@ -177,9 +176,9 @@ public class HungryRope extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelMS)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(buttonTestAI)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(checkSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
