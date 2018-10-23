@@ -62,7 +62,7 @@ public class Snake {
         {
             moveSnake();
         }
-        catch(NullPointerException NPE)
+        catch(IndexOutOfBoundsException IOOBE)
         {
             replaying = false;
         } catch (IOException ex) {
@@ -166,7 +166,7 @@ public class Snake {
      * also checks if the snake has hit the edges/body parts, and if it's collected food
      * @see Direction
      */
-    public void moveSnake() throws NullPointerException, IOException
+    public void moveSnake() throws IndexOutOfBoundsException, IOException
     {
         //Moves bodyCoords, checks for food collection, and checks if the bodyCoords rammed itself
         Point prevHead = bodyCoords.get(0);
@@ -200,7 +200,7 @@ public class Snake {
         checkFood();
 
         checkHit();
-        if (!replaying)
+        if (recordingReplay)
         {
             replay.add("" + head.x);
             replay.add("" + head.y);

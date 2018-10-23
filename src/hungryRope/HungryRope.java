@@ -25,7 +25,7 @@ import javax.swing.ImageIcon;
  * @author chhar9972
  */
 public class HungryRope extends javax.swing.JFrame {
-    static boolean snakesAlive, pause = false, test = false, replaying = false, thisHighScore = false;
+    static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
     static int difficulty, repeats, frame, highScore = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
@@ -67,6 +67,10 @@ public class HungryRope extends javax.swing.JFrame {
         labelMS = new javax.swing.JLabel();
         AIStart = new javax.swing.JButton();
         buttonTestAI = new javax.swing.JButton();
+        buttonLoadReplay = new javax.swing.JButton();
+        checkSave = new javax.swing.JCheckBox();
+        fieldSaveName = new javax.swing.JTextField();
+        fieldLoadName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
@@ -129,6 +133,23 @@ public class HungryRope extends javax.swing.JFrame {
             }
         });
 
+        buttonLoadReplay.setText("Load Replay");
+        buttonLoadReplay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonLoadReplayActionPerformed(evt);
+            }
+        });
+
+        checkSave.setBackground(new java.awt.Color(255, 255, 255));
+        checkSave.setSelected(true);
+        checkSave.setText("Save Replay");
+        checkSave.setToolTipText("");
+        checkSave.setContentAreaFilled(false);
+
+        fieldSaveName.setText("replayName");
+
+        fieldLoadName.setText("replayName");
+
         javax.swing.GroupLayout backgroundLayout = new javax.swing.GroupLayout(background);
         background.setLayout(backgroundLayout);
         backgroundLayout.setHorizontalGroup(
@@ -136,6 +157,11 @@ public class HungryRope extends javax.swing.JFrame {
             .addGroup(backgroundLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(iconPlayArea, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(labelScore, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(backgroundLayout.createSequentialGroup()
                         .addComponent(title)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -145,21 +171,24 @@ public class HungryRope extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(AIStart)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonTestAI)
-                        .addGap(45, 45, 45)
-                        .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(46, 46, 46)
                         .addComponent(labelDifficulty)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelMS)
-                        .addGap(0, 546, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(iconPlayArea, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(labelScore, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonTestAI)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(checkSave)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldSaveName, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonLoadReplay)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldLoadName, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 91, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         backgroundLayout.setVerticalGroup(
@@ -167,20 +196,27 @@ public class HungryRope extends javax.swing.JFrame {
             .addGroup(backgroundLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(buttonStart)
-                        .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(youDied)
-                        .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelDifficulty)
-                        .addComponent(labelMS)
-                        .addComponent(AIStart)
-                        .addComponent(buttonTestAI))
-                    .addComponent(title))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 558, Short.MAX_VALUE)
-                .addComponent(iconPlayArea)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelScore)
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addComponent(title)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 558, Short.MAX_VALUE)
+                        .addComponent(iconPlayArea)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelScore))
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(buttonStart)
+                            .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(youDied)
+                            .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelDifficulty)
+                            .addComponent(labelMS)
+                            .addComponent(AIStart)
+                            .addComponent(buttonTestAI)
+                            .addComponent(checkSave)
+                            .addComponent(fieldSaveName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonLoadReplay)
+                            .addComponent(fieldLoadName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -200,6 +236,7 @@ public class HungryRope extends javax.swing.JFrame {
     
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
         snakes[0] = new Snake(0, 150, 0, false);
+        recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_buttonStartActionPerformed
@@ -224,6 +261,7 @@ public class HungryRope extends javax.swing.JFrame {
  
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
         snakes[0] = new Snake(0, 150, 0, true);
+        recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
@@ -231,9 +269,23 @@ public class HungryRope extends javax.swing.JFrame {
     private void buttonTestAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestAIActionPerformed
         snakes[0] = new Snake(0, 150, 0, true);
         test = true;
+        recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_buttonTestAIActionPerformed
+
+    private void buttonLoadReplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoadReplayActionPerformed
+        try {
+            replay = (ArrayList<String>) Files.readAllLines(Paths.get("replays/" +fieldLoadName.getText() + ".txt"));
+            replaying = true;
+            recordingReplay = false;
+            snakes[0] = new Snake(0, 150, 0, false);
+            startGame();
+            labelScore.setVisible(true);
+        } catch (IOException ex) {
+            fieldLoadName.setText("Enter an existing file");
+        }
+    }//GEN-LAST:event_buttonLoadReplayActionPerformed
 
     public void startGame()
     {
@@ -275,6 +327,10 @@ public class HungryRope extends javax.swing.JFrame {
         youDied.setVisible(see);
         AIStart.setVisible(see);
         buttonTestAI.setVisible(see);
+        buttonLoadReplay.setVisible(see);
+        fieldLoadName.setVisible(see);
+        checkSave.setVisible(see);
+        fieldSaveName.setVisible(see);
         fieldDifficulty.setVisible(see);
         labelDifficulty.setVisible(see);
         labelMS.setVisible(see);
@@ -292,65 +348,18 @@ public class HungryRope extends javax.swing.JFrame {
         {
             if (!replaying)
             {
-                updateGrid();
-                do
-                {
-                    snakesAlive = false;
-                    for (Snake snake : snakes) 
-                    {
-                        if (snake.alive) snake.move();
-                        snakesAlive = snakesAlive ? true : snake.alive;
-                    }
-                    updateGrid();
-                    if (!test || thisHighScore)
-                    {
-                        paintScreen();
-                        sleep(difficulty);
-                    }
-                }while (snakesAlive);
-
-                scores.add(snakes[0].score);
-
-                double averageScore = 0;
-                for(int score : scores)
-                {
-                    if (score > highScore) 
-                    {
-                        highScore = score;
-                        writeReplayToFile();
-                    }
-                    averageScore += score;
-                }
-
-                replay.clear();
-
-                averageScore = (int)(averageScore / scores.size() * 100);
-                averageScore /= 100;
-                System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
-                        "  Highscore: " + highScore);
-                thisHighScore = false;
-                if (scores.size() < repeats && test)
-                {
-                    snakes[0] = new Snake(0, 150, 0, true);
-                    startGame();
-                }else
-                {                
-                    test = false;
-                    scores.clear();
-                    highScore = 0;
-                    buttonStart.setVisible(true);
-                    changeVisible(true);
-                }
+                notReplaying();
             }else
             {
-                
-                try {
-                    replay = (ArrayList<String>) Files.readAllLines(Paths.get("gameSave.txt"));
-                    try {
-                        snakes[0].bodyCoords.add(new Point (readFileLine(0), readFileLine(1)));
-                        food = new Point(readFileLine(2), readFileLine(3));
-                    } catch (NumberFormatException ex) {
-                    }
+                replaying();
+            }
+        }
+        
+        public void replaying()
+        {
+            try {
+                    snakes[0].bodyCoords.add(new Point (readFileLine(0), readFileLine(1)));
+                    food = new Point(readFileLine(2), readFileLine(3));
                 } catch (IOException ex) {
                     System.out.println("ERR");
                 }
@@ -362,6 +371,63 @@ public class HungryRope extends javax.swing.JFrame {
                     sleep(difficulty);
                     frame ++;
                 }
+                
+                frame = 0;
+                buttonStart.setVisible(true);
+                changeVisible(true);
+        }
+        
+        public void notReplaying()
+        {
+            
+            updateGrid();
+            do
+            {
+                snakesAlive = false;
+                for (Snake snake : snakes) 
+                {
+                    if (snake.alive) snake.move();
+                    snakesAlive = snakesAlive ? true : snake.alive;
+                }
+                updateGrid();
+                if (!test || thisHighScore)
+                {
+                    paintScreen();
+                    sleep(difficulty);
+                }
+            }while (snakesAlive);
+
+            scores.add(snakes[0].score);
+
+            double averageScore = 0;
+            for(int score : scores)
+            {
+                if (score > highScore) 
+                {
+                    highScore = score;
+                    if (recordingReplay) writeReplayToFile();
+                }
+                averageScore += score;
+            }
+
+            if (recordingReplay) replay.clear();
+
+            averageScore = (int)(averageScore / scores.size() * 100);
+            averageScore /= 100;
+            System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
+                    "  Highscore: " + highScore);
+            thisHighScore = false;
+            if (scores.size() < repeats && test)
+            {
+                snakes[0] = new Snake(0, 150, 0, true);
+                startGame();
+            }else
+            {                
+                test = false;
+                scores.clear();
+                highScore = 0;
+                buttonStart.setVisible(true);
+                changeVisible(true);
             }
         }
         
@@ -483,9 +549,8 @@ public class HungryRope extends javax.swing.JFrame {
     public void writeReplayToFile()
     {
         try {
-            // Open given file in append mode. 
             BufferedWriter out = new BufferedWriter( 
-                   new FileWriter("gameSave.txt"));
+                   new FileWriter("replays/" + fieldSaveName.getText() + ".txt"));
             for (String line : replay)
             {
                 out.write(line + "\n");
@@ -503,7 +568,7 @@ public class HungryRope extends javax.swing.JFrame {
      * @return {@code lineNumber} line
      * @throws IOException if nonexistant lol
      */
-    static public int readFileLine(int lineNumber) throws NumberFormatException, IOException
+    static public int readFileLine(int lineNumber) throws IndexOutOfBoundsException, IOException
     {
         return Integer.parseInt(replay.get(lineNumber));
     }
@@ -612,9 +677,13 @@ public class HungryRope extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AIStart;
     private javax.swing.JPanel background;
+    private javax.swing.JButton buttonLoadReplay;
     private javax.swing.JButton buttonStart;
     private javax.swing.JButton buttonTestAI;
+    private javax.swing.JCheckBox checkSave;
     private javax.swing.JTextField fieldDifficulty;
+    private javax.swing.JTextField fieldLoadName;
+    private javax.swing.JTextField fieldSaveName;
     private javax.swing.JLabel iconPlayArea;
     private javax.swing.JTextField keyInput;
     private javax.swing.JLabel labelDifficulty;

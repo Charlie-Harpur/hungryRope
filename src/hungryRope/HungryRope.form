@@ -51,6 +51,13 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="iconPlayArea" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelScore" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="title" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -60,23 +67,24 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="AIStart" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="buttonTestAI" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
-                          <Component id="keyInput" min="-2" pref="0" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                           <Component id="labelDifficulty" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="fieldDifficulty" min="-2" pref="130" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="labelMS" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="546" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="iconPlayArea" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="labelScore" alignment="1" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="keyInput" min="-2" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="buttonTestAI" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="checkSave" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fieldSaveName" min="-2" pref="159" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="buttonLoadReplay" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fieldLoadName" min="-2" pref="159" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="91" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -88,22 +96,31 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="buttonStart" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="keyInput" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="youDied" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="fieldDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="labelDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="labelMS" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="AIStart" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="buttonTestAI" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="title" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="558" max="32767" attributes="0"/>
+                          <Component id="iconPlayArea" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="labelScore" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="title" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="buttonStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="keyInput" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="youDied" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="fieldDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelMS" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="AIStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="buttonTestAI" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="checkSave" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="fieldSaveName" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="buttonLoadReplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="fieldLoadName" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace pref="558" max="32767" attributes="0"/>
-                  <Component id="iconPlayArea" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="labelScore" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -198,6 +215,35 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonTestAIActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="buttonLoadReplay">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Load Replay"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonLoadReplayActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="checkSave">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Save Replay"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="fieldSaveName">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="replayName"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="fieldLoadName">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="replayName"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
