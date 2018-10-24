@@ -345,13 +345,8 @@ public class HungryRope extends javax.swing.JFrame {
         @Override
         public void run()
         {
-            if (!replaying)
-            {
-                notReplaying();
-            }else
-            {
-                replaying();
-            }
+            if (!replaying) notReplaying();
+            else replaying();
         }
         
         public void replaying()
@@ -537,7 +532,7 @@ public class HungryRope extends javax.swing.JFrame {
             try {
                     Thread.sleep(millis);
             } catch (InterruptedException ex) {
-                Logger.getLogger(HungryRope.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("YEED");
             }
         }
     }
