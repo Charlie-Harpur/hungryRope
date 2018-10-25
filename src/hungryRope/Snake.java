@@ -4,19 +4,16 @@
 
 package hungryRope;
 
-import static hungryRope.HungryRope.*;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Snake class stores snake data such as {@link bodyCoords}, {@link aiStatus}, {@link headColour},
  * {@link bodyColour}, {@link direction}, and {@link alive}
  */
-public class Snake {
+public class Snake extends HungryRope{
     boolean aiStatus, alive;
     int score;
     Color bodyColour, headColour;
@@ -35,19 +32,19 @@ public class Snake {
     public Snake(int r, int g, int b, boolean aiStatus)
     {
         this.aiStatus = aiStatus;
-        bodyColour = new Color(r, g, b);
+        this.bodyColour = new Color(r, g, b);
         r = r > 0 ? 255 : 0;
         g = g > 0 ? 255 : 0;
         b = b > 0 ? 255 : 0;
-        headColour = new Color(r, g, b);
-        score = 1;
-        alive = true;
+        this.headColour = new Color(r, g, b);
+        this.score = 1;
+        this.alive = true;
         if (aiStatus) this.direction = new Direction('x', 1);
         else this.direction = new Direction(' ', 0);
-        bodyCoords = new ArrayList();
+        this.bodyCoords = new ArrayList();
         if (!replaying)
         {
-            bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
+            this.bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
         }
     }
     
@@ -85,21 +82,45 @@ public class Snake {
            direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
         }
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
-        if(nextCoordBody())
+        if(nextCoordBody() || checkBox(head, direction, 0))
         {
             direction.axis = notAxis(direction.axis) != getCoord(notAxis(direction.axis), food) ? notAxis(direction.axis) : direction.axis;
             direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         }
         //Detours that navigate body parts
-        if (nextCoordBody() && (getFoodDirection(notAxis(direction.axis)) != 0))
+        if ((nextCoordBody() || checkBox(head, direction, 0)) && (getFoodDirection(notAxis(direction.axis)) != 0))
         {
             direction.axis = notAxis(direction.axis);
             direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
         }
         
-        if (nextCoordBody()) direction = longestDirection();
+        if (nextCoordBody() || checkBox(head, direction, 0)) direction = longestDirection();
     }
     
+    public boolean checkBox(Point point, Direction checkingDirection, int totalFreeSpace)
+    {
+        int availableDirections = 0;
+        Point lookingAt;
+        
+        lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, point) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), point)));
+        
+        for (int axisChanger = 0; axisChanger < 2; axisChanger++)
+        {
+            for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
+            {
+                if (!checkBody(lookingAt))
+                {
+                    availableDirections++;
+                    totalFreeSpace++;
+                    checkBox(lookingAt, checkingDirection, totalFreeSpace);
+                }
+                checkingDirection.posOrNeg *= -1;
+            }
+            checkingDirection.axis = notAxis(checkingDirection.axis);
+        }
+        
+        return availableDirections == 0 && totalFreeSpace < this.bodyCoords.size();
+    }
     /**
      * Gets the positive or negative movement along an axis for the head to get to the food
      * @param axis The axis to check
@@ -145,7 +166,7 @@ public class Snake {
     
     /**
      * Finds how far the Snake can safely travel in that {@link Direction}
-     * @param point Point to checkDirection from
+     * @param point Point to checkingDirection from
      * @param direction {@link Direction} to check length
      * @return length the Snake can safely travel in that {@link Direction}
      */
@@ -255,14 +276,16 @@ public class Snake {
      */
     public void checkHit()
     {
-        //Make checkBody work (for ai and hit detection)
-        for (Snake snake : snakes)
+        for (Snake snake : snakes)//messy, fix later
         {
-            for (int i = !snake.equals(this) ? 0 : 1; i < snake.bodyCoords.size(); i++)
+            if (snake.bodyCoords.size() > 1)
             {
-                if (snake.bodyCoords.get(i).equals(head))
+                for (int i = !snake.equals(this) ? 0 : 1; i < snake.bodyCoords.size(); i++)
                 {
-                    this.alive = false;
+                    if (snake.bodyCoords.get(i).equals(head))
+                    {
+                        this.alive = false;
+                    }
                 }
             }
         }
