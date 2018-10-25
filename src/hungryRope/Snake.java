@@ -99,27 +99,31 @@ public class Snake extends HungryRope{
     
     public boolean checkBox(Point point, Direction checkingDirection, int totalFreeSpace)
     {
-        int availableDirections = 0;
+        int numAvailableDirections = 0;
+        boolean boxDone = false;
+        ArrayList<Direction> availableDirections = new ArrayList();
         Point lookingAt;
         
-        lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, point) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), point)));
-        
-        for (int axisChanger = 0; axisChanger < 2; axisChanger++)
+        if ()
         {
-            for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
+            for (int axisChanger = 0; axisChanger < 2; axisChanger++)
             {
-                if (!checkBody(lookingAt))
+                for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
                 {
-                    availableDirections++;
-                    totalFreeSpace++;
-                    checkBox(lookingAt, checkingDirection, totalFreeSpace);
+                    lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, point) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), point)));
+                    if (!checkBody(lookingAt))
+                    {
+                        numAvailableDirections++;
+                        totalFreeSpace++;
+                        properSizeBox += checkBox(lookingAt, checkingDirection, totalFreeSpace);
+                    }
+                    checkingDirection.posOrNeg *= -1;
                 }
-                checkingDirection.posOrNeg *= -1;
+             checkingDirection.axis = notAxis(checkingDirection.axis);
             }
-            checkingDirection.axis = notAxis(checkingDirection.axis);
+            properSizeBox += numAvailableDirections == 0;
+            return !totalFreeSpace > this.bodyCoords.size ? false : properSizeBox;
         }
-        
-        return availableDirections == 0 && totalFreeSpace < this.bodyCoords.size();
     }
     /**
      * Gets the positive or negative movement along an axis for the head to get to the food
