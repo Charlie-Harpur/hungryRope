@@ -1,4 +1,4 @@
-/*
+ /*
  * FIX AI
  * 20/10/2018 Highscore of AI 298
  */
@@ -23,15 +23,15 @@ import javax.swing.ImageIcon;
  * @author chhar9972
  */
 public class HungryRope extends javax.swing.JFrame {
-    boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
-    final int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
-    int difficulty, repeats, frame, highScore = 0;
-    String[][] grid = new String[WIDTH][HEIGHT];
+    static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
+    final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
+    static int difficulty, repeats, frame, highScore = 0;
+    static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea;
-    Point food;
-    Snake[] snakes = new Snake[1];
+    static Point food;
+    static Snake[] snakes = new Snake[1];
     ArrayList<Integer> scores = new ArrayList();
-    ArrayList<String> replay = new ArrayList();
+    static ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
     /**
@@ -371,7 +371,6 @@ public class HungryRope extends javax.swing.JFrame {
         
         public void notReplaying()
         {
-            
             updateGrid();
             do
             {
@@ -560,7 +559,7 @@ public class HungryRope extends javax.swing.JFrame {
      * @return {@code lineNumber} line
      * @throws IOException if nonexistant lol
      */
-    public int readFileLine(int lineNumber) throws IndexOutOfBoundsException, IOException
+    public static int readFileLine(int lineNumber) throws IndexOutOfBoundsException, IOException
     {
         return Integer.parseInt(replay.get(lineNumber));
     }
@@ -575,7 +574,7 @@ public class HungryRope extends javax.swing.JFrame {
      * @param array Array to retrieve from
      * @return (when {@code axis} = 'x') {@code  array}[{@code onAxis}][{@code offAxis}] and (when {@code axis} = 'y') {@code array}[{@code offAxis}][{@code onAxis}]
      */
-    public String getElementAt(char axis, int onAxis, int offAxis, String[][] array)
+    public static String getElementAt(char axis, int onAxis, int offAxis, String[][] array)
     {
         String nextSquare;
         try
@@ -594,7 +593,7 @@ public class HungryRope extends javax.swing.JFrame {
      * @param point Point to get coordinate from
      * @return {@code point}.get[{@code axis}]
      */
-    public int getCoord (char axis, Point point)
+    public static int getCoord (char axis, Point point)
     {
         //Allows for more flexibility when getting values from points
         return (axis == 'x' ? (int) point.getX() : (int) point.getY());
@@ -605,7 +604,7 @@ public class HungryRope extends javax.swing.JFrame {
      * @param axis Axis to invert
      * @return (When {@code axis} = 'x') y (When {@code axis} = 'y') x
      */
-    public char notAxis(char axis)
+    public static char notAxis(char axis)
     {
         return axis == 'x' ? 'y' : 'x';
     }
@@ -616,7 +615,7 @@ public class HungryRope extends javax.swing.JFrame {
      * @param max Maximum value in range
      * @return Random integer within range
      */
-    public int random(int min, int max)
+    public static int random(int min, int max)
     {
         return (int)(Math.random() * max + min);
     }

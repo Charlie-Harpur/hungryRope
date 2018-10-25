@@ -8,6 +8,12 @@ public class Direction
     char axis;
     int posOrNeg;
 
+    Direction ()
+    {
+        this.axis = ' ';
+        this.posOrNeg = '0';
+    }
+    
     /**
      * Creates a new Direction
      * @param axis axis of movement

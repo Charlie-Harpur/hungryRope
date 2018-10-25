@@ -4,6 +4,7 @@
 
 package hungryRope;
 
+import static hungryRope.HungryRope.*;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * Snake class stores snake data such as {@link bodyCoords}, {@link aiStatus}, {@link headColour},
  * {@link bodyColour}, {@link direction}, and {@link alive}
  */
-public class Snake extends HungryRope{
+public class Snake{
     boolean aiStatus, alive;
     int score;
     Color bodyColour, headColour;
@@ -40,7 +41,7 @@ public class Snake extends HungryRope{
         this.score = 1;
         this.alive = true;
         if (aiStatus) this.direction = new Direction('x', 1);
-        else this.direction = new Direction(' ', 0);
+        else this.direction = new Direction();
         this.bodyCoords = new ArrayList();
         if (!replaying)
         {
@@ -100,31 +101,44 @@ public class Snake extends HungryRope{
     public boolean checkBox(Point point, Direction checkingDirection, int totalFreeSpace)
     {
         int numAvailableDirections = 0;
-        boolean boxDone = false;
-        ArrayList<Direction> availableDirections = new ArrayList();
+        boolean properSizeBox = false;
         Point lookingAt;
-        
-        if ()
+        Direction prevSpot = new Direction(checkingDirection.axis, checkingDirection.posOrNeg * -1);
+        ArrayList<Direction> availableDirection = new ArrayList();
+        // inferior
+        if(!(totalFreeSpace > this.bodyCoords.size()))
         {
             for (int axisChanger = 0; axisChanger < 2; axisChanger++)
             {
                 for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
                 {
-                    lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, point) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), point)));
-                    if (!checkBody(lookingAt))
+                    if (checkingDirection != prevSpot)
                     {
-                        numAvailableDirections++;
-                        totalFreeSpace++;
-                        properSizeBox += checkBox(lookingAt, checkingDirection, totalFreeSpace);
+                        lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, point) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), point)));
+                        if (!checkBody(lookingAt))
+                        {
+                            numAvailableDirections++;
+                            totalFreeSpace++;
+                            availableDirection.add(checkingDirection);
+                        }
                     }
                     checkingDirection.posOrNeg *= -1;
                 }
              checkingDirection.axis = notAxis(checkingDirection.axis);
             }
-            properSizeBox += numAvailableDirections == 0;
-            return !totalFreeSpace > this.bodyCoords.size ? false : properSizeBox;
+            
+            
+                properSizeBox = !checkBox(
+                        makePoint(availableDirection.axis, getCoord(availableDirection.axis, point) + availableDirection.posOrNeg,
+                        getCoord(notAxis(availableDirection.axis), point)), 
+                        availableDirection, totalFreeSpace);
+            return !(totalFreeSpace > this.bodyCoords.size()) ? !properSizeBox : false;
+        }else
+        {
+            return false;
         }
     }
+    
     /**
      * Gets the positive or negative movement along an axis for the head to get to the food
      * @param axis The axis to check
@@ -280,16 +294,13 @@ public class Snake extends HungryRope{
      */
     public void checkHit()
     {
-        for (Snake snake : snakes)//messy, fix later
+        for (Snake snakeCheckHit : snakes)
         {
-            if (snake.bodyCoords.size() > 1)
+            for (int bodyCoordIndex = !snakeCheckHit.equals(this) ? 0 : 1; bodyCoordIndex < snakeCheckHit.bodyCoords.size(); bodyCoordIndex++)
             {
-                for (int i = !snake.equals(this) ? 0 : 1; i < snake.bodyCoords.size(); i++)
+                if (snakeCheckHit.bodyCoords.get(bodyCoordIndex).equals(head))
                 {
-                    if (snake.bodyCoords.get(i).equals(head))
-                    {
-                        this.alive = false;
-                    }
+                    this.alive = false;
                 }
             }
         }
