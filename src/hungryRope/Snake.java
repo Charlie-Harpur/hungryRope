@@ -98,45 +98,42 @@ public class Snake{
         if (nextCoordBody() || checkBox(head, direction, 0)) direction = longestDirection();
     }
     
-    public boolean checkBox(Point point, Direction checkingDirection, int totalFreeSpace)
+    
+    /*
+    Check a direction 
+    */
+    
+    public int getBoxSize(Point startingPoint, Point currentPoint, Direction checkingDirection, int boxWidth, int boxLength, int totalFreeSpace)
     {
         int numAvailableDirections = 0;
         boolean properSizeBox = false;
         Point lookingAt;
         Direction prevSpot = new Direction(checkingDirection.axis, checkingDirection.posOrNeg * -1);
         ArrayList<Direction> availableDirection = new ArrayList();
-        // inferior
-        if(!(totalFreeSpace > this.bodyCoords.size()))
+        
+        for (int axisChanger = 0; axisChanger < 2; axisChanger++)
         {
-            for (int axisChanger = 0; axisChanger < 2; axisChanger++)
+            for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
-                for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
+                if (checkingDirection != prevSpot)
                 {
-                    if (checkingDirection != prevSpot)
+                    lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, currentPoint) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), currentPoint)));
+                    if (!checkBody(lookingAt))
                     {
-                        lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, point) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), point)));
-                        if (!checkBody(lookingAt))
-                        {
-                            numAvailableDirections++;
-                            totalFreeSpace++;
-                            availableDirection.add(checkingDirection);
-                        }
+                        numAvailableDirections++;
+                        totalFreeSpace++;
+                        availableDirection.add(checkingDirection);
                     }
-                    checkingDirection.posOrNeg *= -1;
                 }
-             checkingDirection.axis = notAxis(checkingDirection.axis);
+                checkingDirection.posOrNeg *= -1;
             }
-            
-            
-                properSizeBox = !checkBox(
-                        makePoint(availableDirection.axis, getCoord(availableDirection.axis, point) + availableDirection.posOrNeg,
-                        getCoord(notAxis(availableDirection.axis), point)), 
-                        availableDirection, totalFreeSpace);
-            return !(totalFreeSpace > this.bodyCoords.size()) ? !properSizeBox : false;
-        }else
-        {
-            return false;
+         checkingDirection.axis = notAxis(checkingDirection.axis);
         }
+            
+            
+                properSizeBox = !checkBox(makePoint(availableDirection.axis, getCoord(availableDirection.axis, currentPoint) + availableDirection.posOrNeg,
+                        getCoord(notAxis(availableDirection.axis), currentPoint)), 
+                        availableDirection, totalFreeSpace);
     }
     
     /**
