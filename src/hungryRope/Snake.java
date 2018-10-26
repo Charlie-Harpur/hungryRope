@@ -83,28 +83,62 @@ public class Snake{
            direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
         }
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
-        if(nextCoordBody() || checkBox(head, direction, 0))
+        if(nextCoordBody() || getBoxSize(direction) < score)
         {
             direction.axis = notAxis(direction.axis) != getCoord(notAxis(direction.axis), food) ? notAxis(direction.axis) : direction.axis;
             direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         }
         //Detours that navigate body parts
-        if ((nextCoordBody() || checkBox(head, direction, 0)) && (getFoodDirection(notAxis(direction.axis)) != 0))
+        if ((nextCoordBody() || getBoxSize(direction) < score) && getFoodDirection(notAxis(direction.axis)) != 0)
         {
             direction.axis = notAxis(direction.axis);
             direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
         }
         
-        if (nextCoordBody() || checkBox(head, direction, 0)) direction = longestDirection();
+        if (nextCoordBody() || getBoxSize(direction) < score) direction = largestBoxSizeDirection();
     }
     
     
-    /*
-    Check a direction 
-    */
-    
-    public int getBoxSize(Point startingPoint, Point currentPoint, Direction checkingDirection, int boxWidth, int boxLength, int totalFreeSpace)
+    public Direction largestBoxSizeDirection()
     {
+        Direction checkingDirection = direction, largestDirection;
+        int largestSpace = 0;
+        Point lookingAt;
+        
+        for (int axisChanger = 0; axisChanger < 2; axisChanger++)
+        {
+            for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
+            {
+                    lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), head)));
+                    if (!checkBody(lookingAt))
+                    {
+                        if (getBoxSize(checkingDirection) > largestSpace)
+                        {
+                            largestSpace = getBoxSize(checkingDirection);
+                            largestDirection = checkingDirection;
+                        }
+                    }
+                checkingDirection.posOrNeg *= -1;
+            }
+         checkingDirection.axis = notAxis(checkingDirection.axis);
+        }
+        return checkingDirection;
+    }
+    
+    public int getBoxSize(Direction checkingDirection)
+    {
+        Snake testSnake = this;
+        testSnake.direction = checkingDirection;
+        for (int i = 0; i < testSnake.score; i++)
+        {
+            testSnake.move();
+            if(testSnake.alive = false) return i;
+        }
+        return testSnake.score;
+        
+        
+        
+        /*
         int numAvailableDirections = 0;
         boolean properSizeBox = false;
         Point lookingAt;
@@ -134,6 +168,7 @@ public class Snake{
                 properSizeBox = !checkBox(makePoint(availableDirection.axis, getCoord(availableDirection.axis, currentPoint) + availableDirection.posOrNeg,
                         getCoord(notAxis(availableDirection.axis), currentPoint)), 
                         availableDirection, totalFreeSpace);
+        */
     }
     
     /**
@@ -200,6 +235,7 @@ public class Snake{
     /**
      * Moves the snake and its and its body Point {@link Direction} along the grid
      * also checks if the snake has hit the edges/body parts, and if it's collected food
+     * @throws java.io.IOException
      * @see Direction
      */
     public void moveSnake() throws IndexOutOfBoundsException, IOException
@@ -247,6 +283,7 @@ public class Snake{
 
     /**
      * Checks if the head's coordinates equal the food's coordinates
+     * @throws java.io.IOException
      */
     public void checkFood() throws NumberFormatException, IOException
     {
@@ -291,16 +328,16 @@ public class Snake{
      */
     public void checkHit()
     {
-        for (Snake snakeCheckHit : snakes)
-        {
-            for (int bodyCoordIndex = !snakeCheckHit.equals(this) ? 0 : 1; bodyCoordIndex < snakeCheckHit.bodyCoords.size(); bodyCoordIndex++)
+        //for (Snake snakeCheckHit : snakes)
+        //{
+            for (int bodyCoordIndex = !this.equals(this) ? 0 : 1; bodyCoordIndex < this.bodyCoords.size(); bodyCoordIndex++)
             {
-                if (snakeCheckHit.bodyCoords.get(bodyCoordIndex).equals(head))
+                if (this.bodyCoords.get(bodyCoordIndex).equals(head))
                 {
-                    this.alive = false;
+                    alive = false;
                 }
             }
-        }
+        //}
     }
     
     /**
