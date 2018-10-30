@@ -83,19 +83,19 @@ public class Snake{
            direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
         }
         direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
-        if(nextCoordBody() || getBoxSize(direction) < score)
+        if(nextCoordBody())
         {
             direction.axis = notAxis(direction.axis) != getCoord(notAxis(direction.axis), food) ? notAxis(direction.axis) : direction.axis;
             direction.posOrNeg = getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
         }
         //Detours that navigate body parts
-        if ((nextCoordBody() || getBoxSize(direction) < score) && getFoodDirection(notAxis(direction.axis)) != 0)
+        if ((nextCoordBody()) && getFoodDirection(notAxis(direction.axis)) != 0)
         {
             direction.axis = notAxis(direction.axis);
             direction.posOrNeg = getFoodDirection(direction.axis) != 0 ? getFoodDirection(direction.axis) : direction.posOrNeg;
         }
         
-        if (nextCoordBody() || getBoxSize(direction) < score) direction = largestBoxSizeDirection();
+        if (nextCoordBody()) direction = longestDirection();
     }
     
     
@@ -127,48 +127,9 @@ public class Snake{
     
     public int getBoxSize(Direction checkingDirection)
     {
-        Snake testSnake = this;
-        testSnake.direction = checkingDirection;
-        for (int i = 0; i < testSnake.score; i++)
-        {
-            testSnake.move();
-            if(testSnake.alive = false) return i;
-        }
-        return testSnake.score;
+        String[][] boxGrid = new String[WIDTH][HEIGHT];
+        int boxSize = 0;
         
-        
-        
-        /*
-        int numAvailableDirections = 0;
-        boolean properSizeBox = false;
-        Point lookingAt;
-        Direction prevSpot = new Direction(checkingDirection.axis, checkingDirection.posOrNeg * -1);
-        ArrayList<Direction> availableDirection = new ArrayList();
-        
-        for (int axisChanger = 0; axisChanger < 2; axisChanger++)
-        {
-            for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
-            {
-                if (checkingDirection != prevSpot)
-                {
-                    lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, currentPoint) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), currentPoint)));
-                    if (!checkBody(lookingAt))
-                    {
-                        numAvailableDirections++;
-                        totalFreeSpace++;
-                        availableDirection.add(checkingDirection);
-                    }
-                }
-                checkingDirection.posOrNeg *= -1;
-            }
-         checkingDirection.axis = notAxis(checkingDirection.axis);
-        }
-            
-            
-                properSizeBox = !checkBox(makePoint(availableDirection.axis, getCoord(availableDirection.axis, currentPoint) + availableDirection.posOrNeg,
-                        getCoord(notAxis(availableDirection.axis), currentPoint)), 
-                        availableDirection, totalFreeSpace);
-        */
     }
     
     /**
@@ -290,7 +251,7 @@ public class Snake{
         //Adds to score and changes food if the bodyCoords head is on the food
         if (bodyCoords.get(0).equals(food))
         {
-            score += 3;
+            score += 10;
             if (replaying)
             {
                 food = new Point (readFileLine(frame * 4 + 2), readFileLine(frame * 4 + 3));
