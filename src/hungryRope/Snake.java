@@ -134,11 +134,13 @@ public class Snake{
         boxSize = 0;
         
         boxColumnChecker(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)));
+        //System.out.println(boxSize);
         return boxSize;
     }
     
     public void boxColumnChecker(Point checkingPoint)
     {
+        /*
         Point start = checkingPoint;
         
         int checkingDirection = 1;
@@ -162,6 +164,19 @@ public class Snake{
             checkingDirection = -1;
             checkingPoint = start;
         }
+        */
+      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0) {
+      boxGrid[checkingPoint.x][checkingPoint.y] = 1;
+      boxSize++;
+      boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y - 1));
+      boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
+      boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y + 1));
+      boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y - 1));
+      boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y + 1));
+      boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y - 1));
+      boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
+      boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y + 1));
+      }
     }
     
     /**
@@ -188,7 +203,7 @@ public class Snake{
      * @return Furthest {@link Direction} the snake can travel
      */
     public Direction longestDirection()
-    {
+    {// gotcha again loser
         Direction longestDirection = new Direction (' ', 0);
         int longestDirectionNum = 0;
         char axis = this.direction.axis;
@@ -257,7 +272,7 @@ public class Snake{
             }else if (direction.axis == 'x')
             {
                 bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
-            }
+            }// gotcha again loser
         }
         
         head = bodyCoords.get(0);
