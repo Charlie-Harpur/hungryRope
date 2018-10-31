@@ -405,15 +405,15 @@ public class HungryRope extends javax.swing.JFrame {
 
             averageScore = (int)(averageScore / scores.size() * 100);
             averageScore /= 100;
-            System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
-                    "  Highscore: " + highScore);
             thisHighScore = false;
             if (scores.size() < repeats && test)
             {
                 snakes[0] = new Snake(0, 150, 0, true);
                 startGame();
             }else
-            {                
+            {
+                System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
+                    "  Highscore: " + highScore);
                 test = false;
                 scores.clear();
                 highScore = 0;
