@@ -1,6 +1,7 @@
  /*
  * FIX AI
- * 20/10/2018 Highscore of AI 298
+ * 1/11/2018 Highscore of AI 343
+ * 1/11/2018 1000  Score: 28  Average score: 106.31  Highscore: 292
  */
 
 package hungryRope;
