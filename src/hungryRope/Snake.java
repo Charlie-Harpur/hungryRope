@@ -89,8 +89,8 @@ public class Snake{
         {
             //Checks other direction to food
             direction.axis = notAxis(direction.axis) != getCoord(notAxis(direction.axis), food) ? notAxis(direction.axis) : direction.axis;
-            direction.posOrNeg = getFoodDirection(direction.axis);
-
+            if (getFoodDirection(direction.axis) != 0) direction.posOrNeg = getFoodDirection(direction.axis);
+            
             if (checkBody(nextCoord()) || getBoxSize(direction) < score) direction = largestBoxSizeDirection();
         }
     }
@@ -105,9 +105,11 @@ public class Snake{
         {
             for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
-                    lookingAt = new Point (makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), head)));
+                    lookingAt = makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), head));
                     if (!checkBody(lookingAt))
                     {
+                        System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
+                        
                         if (getBoxSize(checkingDirection) > largestSpace)
                         {
                             largestSpace = getBoxSize(checkingDirection);
@@ -118,7 +120,7 @@ public class Snake{
             }
          checkingDirection.axis = notAxis(checkingDirection.axis);
         }
-        System.out.println(largestSpace);
+        System.out.println(largestSpace + "  " + largestDirection.axis + "  " + largestDirection.posOrNeg);
         return largestDirection;
     }
     
@@ -133,7 +135,7 @@ public class Snake{
         }
         boxSize = 0;
         
-        boxColumnChecker(makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head)));
+        boxColumnChecker(makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), head)));
         //System.out.println(boxSize);
         return boxSize;
     }
@@ -165,17 +167,14 @@ public class Snake{
             checkingPoint = start;
         }
         */
-      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0) {
-      boxGrid[checkingPoint.x][checkingPoint.y] = 1;
-      boxSize++;
-      boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y - 1));
-      boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
-      boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y + 1));
-      boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y - 1));
-      boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y + 1));
-      boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y - 1));
-      boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
-      boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y + 1));
+      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0)
+      {
+          boxGrid[checkingPoint.x][checkingPoint.y] = 1;
+          boxSize++;
+          boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
+          boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y - 1));
+          boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y + 1));
+          boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
       }
     }
     
