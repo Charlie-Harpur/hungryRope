@@ -24,6 +24,15 @@ public class Direction
         this.axis = axis;
         this.posOrNeg = posOrNeg;
     }
+    
+    /**
+     * Returns the other axis than the {@link Direction}
+     * @return (When {@code axis} = 'x') y (When {@code axis} = 'y') x
+     */
+    public char notAxis()
+    {
+        return this.axis == 'x' ? 'y' : 'x';
+    }
 
     /**
      * Checks if two Directions are equal to each other

@@ -598,16 +598,6 @@ public class HungryRope extends javax.swing.JFrame {
         //Allows for more flexibility when getting values from points
         return (axis == 'x' ? (int) point.getX() : (int) point.getY());
     }
-
-    /**
-     * Returns the other axis than input {@code axis}
-     * @param axis Axis to invert
-     * @return (When {@code axis} = 'x') y (When {@code axis} = 'y') x
-     */
-    public static char notAxis(char axis)
-    {
-        return axis == 'x' ? 'y' : 'x';
-    }
     
     /**
      * Returns a random integer within the parameters

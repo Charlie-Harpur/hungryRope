@@ -88,7 +88,7 @@ public class Snake{
         if(checkBody(nextCoord()) || getBoxSize(direction) < score)
         {
             //Checks other direction to food
-            direction.axis = notAxis(direction.axis) != getCoord(notAxis(direction.axis), food) ? notAxis(direction.axis) : direction.axis;
+            direction.axis = direction.notAxis() != getCoord(direction.notAxis(), food) ? direction.notAxis() : direction.axis;
             if (getFoodDirection(direction.axis) != 0) direction.posOrNeg = getFoodDirection(direction.axis);
             
             if (checkBody(nextCoord()) || getBoxSize(direction) < score) direction = largestBoxSizeDirection();
@@ -105,7 +105,7 @@ public class Snake{
         {
             for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
-                    lookingAt = makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), head));
+                    lookingAt = makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head));
                     if (!checkBody(lookingAt))
                     {
                         System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
@@ -118,7 +118,7 @@ public class Snake{
                     }
                 checkingDirection.posOrNeg *= -1;
             }
-         checkingDirection.axis = notAxis(checkingDirection.axis);
+         checkingDirection.axis = checkingDirection.notAxis();
         }
         System.out.println(largestSpace + "  " + largestDirection.axis + "  " + largestDirection.posOrNeg);
         return largestDirection;
@@ -135,38 +135,13 @@ public class Snake{
         }
         boxSize = 0;
         
-        boxColumnChecker(makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(notAxis(checkingDirection.axis), head)));
+        boxColumnChecker(makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head)));
         //System.out.println(boxSize);
         return boxSize;
     }
     
     public void boxColumnChecker(Point checkingPoint)
     {
-        /*
-        Point start = checkingPoint;
-        
-        int checkingDirection = 1;
-        for (int checkingDirectionNum = 0; checkingDirectionNum < 2; checkingDirectionNum++)
-        {
-            for (int i = 0; i < HEIGHT; i++)
-            {
-                if (!checkBody(checkingPoint))
-                {
-                    if (boxGrid[checkingPoint.x][checkingPoint.y] == 0)
-                    {
-                        boxSize++;
-                        boxGrid[checkingPoint.x][checkingPoint.y] = 1;
-                        
-                        boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
-                        boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
-                    }
-                }else break;
-                checkingPoint.y += checkingDirection;
-            }
-            checkingDirection = -1;
-            checkingPoint = start;
-        }
-        */
       if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0)
       {
           boxGrid[checkingPoint.x][checkingPoint.y] = 1;
@@ -194,7 +169,7 @@ public class Snake{
      */
     public Point nextCoord()
     {
-        return makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(notAxis(direction.axis), head));
+        return makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(direction.notAxis(), head));
     }
     
     /**
@@ -202,7 +177,7 @@ public class Snake{
      * @return Furthest {@link Direction} the snake can travel
      */
     public Direction longestDirection()
-    {// gotcha again loser
+    {// NOT WORKING BECAUSE notAxis WAS CHANGED
         Direction longestDirection = new Direction (' ', 0);
         int longestDirectionNum = 0;
         char axis = this.direction.axis;
@@ -216,7 +191,7 @@ public class Snake{
                     longestDirection = new Direction(axis, posOrNeg);
                 }
             }
-            axis = notAxis(axis);
+            //axis = notAxis(axis);
         }
         return longestDirection;
     }
@@ -233,7 +208,7 @@ public class Snake{
         for (int i = getCoord(direction.axis, point) + direction.posOrNeg; (i >= dimension && direction.posOrNeg == -1) || (i < dimension && direction.posOrNeg == 1); i += direction.posOrNeg)
         {
             distance = direction.posOrNeg > 0 ? i - getCoord(direction.axis, point) : getCoord(direction.axis, point) - i;
-            if (checkBody(makePoint(direction.axis, i, getCoord(notAxis(direction.axis), point))))
+            if (checkBody(makePoint(direction.axis, i, getCoord(direction.notAxis(), point))))
                 break;
         }
         return distance;
