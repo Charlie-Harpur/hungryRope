@@ -1,7 +1,7 @@
  /*
  * FIX AI
- * 1/11/2018 Highscore of AI 343
- * 1/11/2018 1000  Score: 28  Average score: 106.31  Highscore: 292
+ * 1/11/2018 Highscore of this AI 343
+ * 1/11/2018 1000  Highscore: 292  Average score: 107.81  
  */
 
 package hungryRope;
@@ -21,7 +21,7 @@ import javax.swing.ImageIcon;
 
 /**
  *
- * @author chhar9972
+ * @author Charlie Harpur
  */
 public class HungryRope extends javax.swing.JFrame {
     static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
@@ -406,8 +406,7 @@ public class HungryRope extends javax.swing.JFrame {
 
             averageScore = (int)(averageScore / scores.size() * 100);
             averageScore /= 100;
-            System.out.println(scores.size() + "  Score: " + snakes[0].score + "  Average score: " + averageScore + 
-                    "  Highscore: " + highScore);
+            System.out.println(scores.size() + "  Highscore: " + highScore + "  Average score: " + averageScore);
             thisHighScore = false;
             if (scores.size() < repeats && test)
             {
