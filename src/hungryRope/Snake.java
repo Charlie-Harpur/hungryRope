@@ -106,10 +106,9 @@ public class Snake{
             for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
                     lookingAt = makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head));
+                    //System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
                     if (!checkBody(lookingAt))
                     {
-                        System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
-                        
                         if (getBoxSize(checkingDirection) > largestSpace)
                         {
                             largestSpace = getBoxSize(checkingDirection);
@@ -120,7 +119,13 @@ public class Snake{
             }
          checkingDirection.axis = checkingDirection.notAxis();
         }
-        System.out.println(largestSpace + "  " + largestDirection.axis + "  " + largestDirection.posOrNeg);
+        largestDirection.posOrNeg *= -1;
+        
+        if (largestSpace > this.bodyCoords.size())
+        {
+            largestDirection = longestDirection();
+        }
+        //System.out.println("\n" + largestSpace + "  " + largestDirection.axis + "  " + largestDirection.posOrNeg + "\n \n");
         return largestDirection;
     }
     
@@ -142,7 +147,7 @@ public class Snake{
     
     public void boxColumnChecker(Point checkingPoint)
     {
-      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0)
+      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0 && !(boxSize > this.bodyCoords.size()))
       {
           boxGrid[checkingPoint.x][checkingPoint.y] = 1;
           boxSize++;
@@ -191,7 +196,7 @@ public class Snake{
                     longestDirection = new Direction(axis, posOrNeg);
                 }
             }
-            //axis = notAxis(axis);
+            axis = new Direction (axis, 0).notAxis();
         }
         return longestDirection;
     }
