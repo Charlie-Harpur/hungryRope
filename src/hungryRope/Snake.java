@@ -101,7 +101,7 @@ public class Snake{
         Direction checkingDirection = direction, bestDirection = new Direction();
         int longestDirection = 0;
         ArrayList<Direction> availableDirections = new ArrayList();
-        
+        System.out.println(checkingDirection.posOrNeg);
         //For some reason bestDirection has a posOrNeg value of 48 and direction has an inverse value of what it's supposed to be
         
         for (int axisChanger = 0; axisChanger < 2; axisChanger++)
@@ -144,10 +144,9 @@ public class Snake{
         return boxSize;
     }
     
-    //Above comment affects here since this is where the bug (probably) is
     public void boxChecker(Point checkingPoint)
     {
-      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0 && !(boxSize > this.bodyCoords.size()))
+      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0 && !(boxSize > this.score))
       {
           boxGrid[checkingPoint.x][checkingPoint.y] = 1;
           boxSize++;
