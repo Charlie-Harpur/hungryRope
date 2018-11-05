@@ -70,8 +70,7 @@ public class Snake{
     }
     
     /**
-     * Determines the {@link Direction}
-     * @see Direction
+     * Determines the {@link Direction} of an AI controlled {@link Snake}
      */
     public void aiMove()
     {
@@ -89,72 +88,73 @@ public class Snake{
         {
             //Checks other direction to food
             direction.axis = direction.notAxis() != getCoord(direction.notAxis(), food) ? direction.notAxis() : direction.axis;
-            if (getFoodDirection(direction.axis) != 0) direction.posOrNeg = getFoodDirection(direction.axis);
+            if (getFoodDirection(direction.axis) != 0) direction.posOrNeg = getFoodDirection(direction.axis);   
             
-            if (checkBody(nextCoord()) || getBoxSize(direction) < score) direction = largestBoxSizeDirection();
+            //Catch all
+            if (checkBody(nextCoord()) || getBoxSize(direction) < score) direction = bestDirection();
         }
     }
     
-    public Direction largestBoxSizeDirection()
+    //Not working (see other comments)
+    public Direction bestDirection()
     {
-        Direction checkingDirection = direction, largestDirection = new Direction();
-        int largestSpace = 0;
-        Point lookingAt;
+        Direction checkingDirection = direction, bestDirection = new Direction();
+        int longestDirection = 0;
+        ArrayList<Direction> availableDirections = new ArrayList();
+        
+        //For some reason bestDirection has a posOrNeg value of 48 and direction has an inverse value of what it's supposed to be
         
         for (int axisChanger = 0; axisChanger < 2; axisChanger++)
         {
             for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
-                    lookingAt = makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head));
-                    //System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
-                    if (!checkBody(lookingAt))
+                    //(Debugging) System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
+                    if (getBoxSize(checkingDirection) > this.score)
                     {
-                        if (getBoxSize(checkingDirection) > largestSpace)
-                        {
-                            largestSpace = getBoxSize(checkingDirection);
-                            largestDirection = checkingDirection;
-                        }
+                        availableDirections.add(checkingDirection);
                     }
                 checkingDirection.posOrNeg *= -1;
             }
          checkingDirection.axis = checkingDirection.notAxis();
         }
-        largestDirection.posOrNeg *= -1;
-        
-        if (largestSpace > this.bodyCoords.size())
+        for (Direction availableDirection : availableDirections)
         {
-            largestDirection = longestDirection();
+            if (checkDirection(head, availableDirection) > longestDirection)
+            {
+                longestDirection = checkDirection(head, availableDirection);
+                bestDirection = availableDirection;
+            }
         }
-        //System.out.println("\n" + largestSpace + "  " + largestDirection.axis + "  " + largestDirection.posOrNeg + "\n \n");
-        return largestDirection;
+        return bestDirection;
     }
     
+    //Returning incorrect box size (max of 2)
     public int getBoxSize(Direction checkingDirection)
     {
-        for (int[] column : boxGrid)
+        for (int x = 0; x < boxGrid.length; x++)
         {
-            for (int i = 0; i < column.length; i++)
+            for (int y = 0; y < boxGrid[0].length; y++)
             {
-                column[i] = 0;
+                boxGrid[x][y] = 0;
             }
         }
         boxSize = 0;
         
-        boxColumnChecker(makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head)));
-        //System.out.println(boxSize);
+        boxChecker(makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head)));
         return boxSize;
     }
     
-    public void boxColumnChecker(Point checkingPoint)
+    //Above comment affects here since this is where the bug (probably) is
+    public void boxChecker(Point checkingPoint)
     {
       if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0 && !(boxSize > this.bodyCoords.size()))
       {
           boxGrid[checkingPoint.x][checkingPoint.y] = 1;
           boxSize++;
-          boxColumnChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
-          boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y - 1));
-          boxColumnChecker(new Point(checkingPoint.x, checkingPoint.y + 1));
-          boxColumnChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
+          boxChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
+          boxChecker(new Point(checkingPoint.x, checkingPoint.y - 1));
+          boxChecker(new Point(checkingPoint.x, checkingPoint.y + 1));
+          boxChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
       }
     }
     
@@ -182,7 +182,7 @@ public class Snake{
      * @return Furthest {@link Direction} the snake can travel
      */
     public Direction longestDirection()
-    {// NOT WORKING BECAUSE notAxis WAS CHANGED
+    {
         Direction longestDirection = new Direction (' ', 0);
         int longestDirectionNum = 0;
         char axis = this.direction.axis;
