@@ -99,32 +99,62 @@ public class Snake{
     public Direction bestDirection()
     {
         Direction checkingDirection = direction, bestDirection = new Direction();
-        int longestDirection = 0;
-        ArrayList<Direction> availableDirections = new ArrayList();
-        System.out.println(checkingDirection.posOrNeg);
-        //For some reason bestDirection has a posOrNeg value of 48 and direction has an inverse value of what it's supposed to be
-        
+        int longestDirectionLength = 0;
+        ArrayList<Direction> availableDirections = new ArrayList(), orthDirections = new ArrayList();
+        System.out.println("\n");
         for (int axisChanger = 0; axisChanger < 2; axisChanger++)
         {
             for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
-                    //(Debugging) System.out.println(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + "  " + checkingDirection.posOrNeg);
-                    if (getBoxSize(checkingDirection) > this.score)
-                    {
-                        availableDirections.add(checkingDirection);
-                    }
+                //(Debugging) 
+                System.out.print(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + ", " + checkingDirection.posOrNeg);
+                
+                orthDirections.add(checkingDirection);
+                
+                if (getBoxSize(checkingDirection) > this.score)
+                {
+                    availableDirections.add(checkingDirection);
+                    //(Debugging)
+                    System.out.print(" - Included");
+                }
+                
+                //(Debugging)
+                System.out.println();
+                
                 checkingDirection.posOrNeg *= -1;
             }
          checkingDirection.axis = checkingDirection.notAxis();
         }
-        for (Direction availableDirection : availableDirections)
+        
+        if (availableDirections.size() > 0)
         {
-            if (checkDirection(head, availableDirection) > longestDirection)
+            //(Debugging)
+            System.out.print("Checking availableDirections");
+            
+            //Always chooses first direction filtered through above
+            for (Direction availableDirection : availableDirections)
             {
-                longestDirection = checkDirection(head, availableDirection);
-                bestDirection = availableDirection;
+                if (checkDirection(head, availableDirection) > longestDirectionLength)
+                {
+                    longestDirectionLength = checkDirection(head, availableDirection);
+                    bestDirection = availableDirection;
+                }
+            }
+        }else
+        {
+            for(Direction catchDirection : orthDirections)
+            {
+                if (checkDirection(head, catchDirection) > longestDirectionLength)
+                {
+                    longestDirectionLength = checkDirection(head, catchDirection);
+                    bestDirection = catchDirection;
+                }
             }
         }
+        
+        //(Debugging) 
+        System.out.println("\n" + getBoxSize(bestDirection) + "  " + bestDirection.axis + ", " + bestDirection.posOrNeg);
+        
         return bestDirection;
     }
     
