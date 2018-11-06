@@ -361,7 +361,7 @@ public class HungryRope extends javax.swing.JFrame {
                     snakes[0].move();
                     updateGrid();
                     paintScreen();
-                    sleep(difficulty);
+                    //sleep(difficulty);
                     frame ++;
                 }
                 
