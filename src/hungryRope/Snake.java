@@ -95,29 +95,20 @@ public class Snake{
         }
     }
     
-    //Not working (see other comments)
     public Direction bestDirection()
     {
         Direction checkingDirection = direction, bestDirection = new Direction();
         int longestDirectionLength = 0;
         ArrayList<Direction> availableDirections = new ArrayList(), orthDirections = new ArrayList();
-        //System.out.println("\n");
         for (int axisChanger = 0; axisChanger < 2; axisChanger++)
         {
             for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
             {
-                //(Debugging) System.out.print(getBoxSize(checkingDirection) + "  " + checkingDirection.axis + ", " + checkingDirection.posOrNeg);
-                
                 orthDirections.add(new Direction (checkingDirection.axis, checkingDirection.posOrNeg));
-                
                 if (getBoxSize(checkingDirection) > this.score)
                 {
                     availableDirections.add(new Direction (checkingDirection.axis, checkingDirection.posOrNeg));
-                    
-                    //(Debugging) System.out.print(" - Included");
                 }
-                
-                //(Debugging) System.out.println();
                 
                 checkingDirection.posOrNeg *= -1;
             }
@@ -126,9 +117,6 @@ public class Snake{
         
         if (availableDirections.size() > 0)
         {
-            //(Debugging) System.out.print("Checking availableDirections");
-            
-            //Always chooses first direction filtered through above
             for (Direction availableDirection : availableDirections)
             {
                 if (checkDirection(head, availableDirection) > longestDirectionLength)
@@ -149,12 +137,9 @@ public class Snake{
             }
         }
         
-        //(Debugging) System.out.println("\n" + getBoxSize(bestDirection) + "  " + bestDirection.axis + ", " + bestDirection.posOrNeg);
-        
         return bestDirection;
     }
     
-    //Returning incorrect box size (max of 2)
     public int getBoxSize(Direction checkingDirection)
     {
         for (int x = 0; x < boxGrid.length; x++)
