@@ -611,6 +611,22 @@ public class HungryRope extends javax.swing.JFrame {
     }
     
     /**
+     * Checking if {@code direction} is in {@code array}
+     * @param array - Arraylist of Direction's
+     * @param direction - Direction to search {@code array} for
+     * @return True if {@code direction} is in {@code array} otherwise false
+     */
+    public static boolean containsDirection(ArrayList<Direction> array, Direction direction)
+    {
+        boolean contains = false;
+        for (Direction element : array)
+        {
+            contains = element.equals(direction) || contains;
+        }
+        return contains;
+    }
+    
+    /**
      * Gets integer code for {@code colour}
      * @param colour Colour to convert
      * @return ARGB code for {@code colour}
