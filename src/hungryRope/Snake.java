@@ -101,11 +101,10 @@ public class Snake{
             if (!((containsDirection(availableDirections, direction) && getCoord(direction.axis, head) != getCoord(direction.axis, food)) || 
                     !(containsDirection(availableDirections, otherWayToFood) && getCoord(otherWayToFood.axis, head) != getCoord(otherWayToFood.axis, food))))
             {
-                direction = new Direction (direction.notAxis(), getFoodDirection(direction.notAxis()));
+                direction = otherWayToFood;
             }else if (!(containsDirection(availableDirections, direction) && getCoord(direction.axis, head) != getCoord(direction.axis, food)))
             {
                 //Catch all
-                System.out.println("o");
                 for (Direction availableDirection : availableDirections)
                 {
                     if (checkDirection(head, availableDirection) > longestDirectionLength)

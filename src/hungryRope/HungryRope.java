@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 /**
- *
  * @author Charlie Harpur
+ * @version 0.2.1
  */
 public class HungryRope extends javax.swing.JFrame {
     static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
