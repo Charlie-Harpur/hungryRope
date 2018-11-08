@@ -95,22 +95,28 @@ public class Snake{
         if (availableDirections.size() > 0)
         {
             //Primary Objective
+            if (direction.axis == 'y')
+            {
+                direction.axis = head.y != food.y ? 'y' : head.x != food.x ? 'x' : ' ';
+            }else
+            {
+               direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
+            }
             direction.posOrNeg = getFoodDirection(direction.axis);
-            Direction otherWayToFood = new Direction (direction.notAxis(), getFoodDirection(direction.notAxis()));
             
-            if (!((containsDirection(availableDirections, direction) && getCoord(direction.axis, head) != getCoord(direction.axis, food)) || 
-                    !(containsDirection(availableDirections, otherWayToFood) && getCoord(otherWayToFood.axis, head) != getCoord(otherWayToFood.axis, food))))
+            if (!containsDirection(availableDirections, direction))
             {
-                direction = otherWayToFood;
-            }else if (!(containsDirection(availableDirections, direction) && getCoord(direction.axis, head) != getCoord(direction.axis, food)))
-            {
+                direction = new Direction(direction.notAxis(), getFoodDirection(direction.notAxis()));
                 //Catch all
-                for (Direction availableDirection : availableDirections)
+                if(!containsDirection(availableDirections, direction))
                 {
-                    if (checkDirection(head, availableDirection) > longestDirectionLength)
+                    for (Direction availableDirection : availableDirections)
                     {
-                        longestDirectionLength = checkDirection(head, availableDirection);
-                        direction = availableDirection;
+                        if (checkDirection(head, availableDirection) > longestDirectionLength)
+                        {
+                            longestDirectionLength = checkDirection(head, availableDirection);
+                            direction = availableDirection;
+                        }
                     }
                 }
             }
