@@ -130,18 +130,15 @@ public class Snake{
             ArrayList<Direction> equalBoxSize = new ArrayList();
             for(Direction catchDirection : orthDirections)
             {
-                if (getBoxSize(catchDirection) > largestBoxSize)
+                if(getBoxSize(catchDirection) > largestBoxSize)
                 {
-                    if(getBoxSize(catchDirection) > largestBoxSize)
-                    {
-                        equalBoxSize.clear();
-                        equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
-                        largestBoxSize = getBoxSize(catchDirection);
-                        bestDirection = catchDirection;
-                    }else if(largestBoxSize == getBoxSize(catchDirection))
-                    {
-                        equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
-                    }
+                    equalBoxSize.clear();
+                    equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
+                    largestBoxSize = getBoxSize(catchDirection);
+                    direction = catchDirection;
+                }else if(largestBoxSize == getBoxSize(catchDirection))
+                {
+                    equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
                 }
             }
             
