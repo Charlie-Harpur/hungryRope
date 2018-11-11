@@ -1,7 +1,7 @@
  /*
  * FIX AI
- * 9/11/2018 Highscore of this AI 775
- * 9/11/2018 1000  Highscore: 775  Average score: 399.17
+ * 11/11/2018 Highscore of this AI 892
+ * 11/11/2018 1000  Highscore: 892  Average score: 474.89
  */
 
 package hungryRope;
@@ -621,7 +621,7 @@ public class HungryRope extends javax.swing.JFrame {
         boolean contains = false;
         for (Direction element : array)
         {
-            contains = element.equals(direction) || contains;
+            contains = element.equals(new Direction(direction.axis, direction.posOrNeg)) || contains;
         }
         return contains;
     }

@@ -74,30 +74,7 @@ public class Snake{
      */
     public void aiMove()
     {
-        //Primary Objective
-        if (direction.axis == 'y')
-        {
-            direction.axis = head.y != food.y ? 'y' : head.x != food.x ? 'x' : ' ';
-        }else
-        {
-           direction.axis = head.x != food.x ? 'x' : head.y != food.y ? 'y' : ' ';
-        }
-        direction.posOrNeg = getFoodDirection(direction.axis);
-        
-        if(checkBody(nextCoord()) || getBoxSize(direction) < score)
-        {
-            //Checks other direction to food
-            direction.axis = direction.notAxis() != getCoord(direction.notAxis(), food) ? direction.notAxis() : direction.axis;
-            if (getFoodDirection(direction.axis) != 0) direction.posOrNeg = getFoodDirection(direction.axis);   
-            
-            //Catch all
-            if (checkBody(nextCoord()) || getBoxSize(direction) < score) direction = bestDirection();
-        }
-    }
-    
-    public Direction bestDirection()
-    {
-        Direction checkingDirection = direction, bestDirection = new Direction();
+        Direction checkingDirection = direction;
         int longestDirectionLength = 0, largestBoxSize = 0;
         ArrayList<Direction> availableDirections = new ArrayList(), orthDirections = new ArrayList();
         for (int axisChanger = 0; axisChanger < 2; axisChanger++)
@@ -117,34 +94,46 @@ public class Snake{
         
         if (availableDirections.size() > 0)
         {
-            for (Direction availableDirection : availableDirections)
+            //Primary Objective (Move towards food)
+            direction.axis = getCoord(direction.axis, head) != getCoord(direction.axis, food) ? direction.axis : 
+                    getCoord(direction.notAxis(), head) != getCoord(direction.notAxis(), food) ? direction.notAxis() : ' ';
+            direction.posOrNeg = getFoodDirection(direction.axis);
+            
+            if (!containsDirection(availableDirections, direction))
             {
-                if (checkDirection(head, availableDirection) > longestDirectionLength)
+                direction = new Direction(direction.notAxis(), getFoodDirection(direction.notAxis()));
+                //Catch all
+                if(!containsDirection(availableDirections, direction))
                 {
-                    longestDirectionLength = checkDirection(head, availableDirection);
-                    bestDirection = availableDirection;
+                    for (Direction availableDirection : availableDirections)
+                    {
+                        if (checkDirection(head, availableDirection) > longestDirectionLength)
+                        {
+                            longestDirectionLength = checkDirection(head, availableDirection);
+                            direction = availableDirection;
+                        }
+                    }
                 }
             }
         }else
         {
+            //Exicutes if no direction has availableSpace > snake size
             ArrayList<Direction> equalBoxSize = new ArrayList();
             for(Direction catchDirection : orthDirections)
             {
-                if (getBoxSize(catchDirection) > largestBoxSize)
+                if(getBoxSize(catchDirection) > largestBoxSize)
                 {
-                    if(getBoxSize(catchDirection) > largestBoxSize)
-                    {
-                        equalBoxSize.clear();
-                        equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
-                        largestBoxSize = getBoxSize(catchDirection);
-                        bestDirection = catchDirection;
-                    }else if(largestBoxSize == getBoxSize(catchDirection))
-                    {
-                        equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
-                    }
+                    equalBoxSize.clear();
+                    equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
+                    largestBoxSize = getBoxSize(catchDirection);
+                    direction = catchDirection;
+                }else if(largestBoxSize == getBoxSize(catchDirection))
+                {
+                    equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
                 }
             }
             
+            //If multiple directions have an equal box size that's also the largest found
             if (equalBoxSize.size() > 1)
             {
                 for (Direction catchDirection : equalBoxSize)
@@ -152,15 +141,18 @@ public class Snake{
                     if (checkDirection(head, catchDirection) > longestDirectionLength)
                     {
                         longestDirectionLength = checkDirection(head, catchDirection);
-                        bestDirection = catchDirection;
+                        direction = catchDirection;
                     }
                 }
             }
         }
-        
-        return bestDirection;
     }
     
+    /**
+     * Returns the size of available space in a direction from the head
+     * @param checkingDirection Direction from head to check
+     * @return Available space in {@code checkingDirection} maxed out at score + 1
+     */
     public int getBoxSize(Direction checkingDirection)
     {
         for (int x = 0; x < boxGrid.length; x++)
@@ -196,7 +188,7 @@ public class Snake{
      */
     public int getFoodDirection(char axis)
     {
-        return getCoord(direction.axis, head) > getCoord(direction.axis, food) ? -1 : 1;
+        return getCoord(axis, head) > getCoord(axis, food) ? -1 : 1;
     }
     
     /**
