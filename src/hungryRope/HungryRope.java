@@ -1,7 +1,7 @@
  /*
  * FIX AI
- * 11/11/2018 Highscore of this AI 892
- * 11/11/2018 1000  Highscore: 892  Average score: 474.89
+ * 13/11/2018 Highscore of this AI 1018
+ * 13/11/2018 1000  Highscore: 1018  Average score: 547.23
  */
 
 package hungryRope;
@@ -21,7 +21,7 @@ import javax.swing.ImageIcon;
 
 /**
  * @author Charlie Harpur
- * @version 0.2.1
+ * @version 0.2.3
  */
 public class HungryRope extends javax.swing.JFrame {
     static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
@@ -307,7 +307,7 @@ public class HungryRope extends javax.swing.JFrame {
             {//Clears image used as playArea
                 for (int y = 0; y < HEIGHT * GRIDSIZE; y++)
                 {
-                    playArea.setRGB(x, y, getARGB(new Color (0, 0, 255)));
+                    playArea.setRGB(x, y, new Color (0, 0, 255).getRGB());
                 }
             }
 
@@ -515,7 +515,7 @@ public class HungryRope extends javax.swing.JFrame {
             {
                 for (int y = startY; y < endY; y++)
                 {
-                    playArea.setRGB (x, y, getARGB(colour));
+                    playArea.setRGB (x, y, colour.getRGB());
                 }
             }
         }
@@ -624,16 +624,6 @@ public class HungryRope extends javax.swing.JFrame {
             contains = element.equals(new Direction(direction.axis, direction.posOrNeg)) || contains;
         }
         return contains;
-    }
-    
-    /**
-     * Gets integer code for {@code colour}
-     * @param colour Colour to convert
-     * @return ARGB code for {@code colour}
-     */
-    public int getARGB(Color colour)
-    {
-        return colour.getRGB();
     }
     
     /**
