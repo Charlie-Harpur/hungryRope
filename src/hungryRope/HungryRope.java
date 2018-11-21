@@ -7,6 +7,7 @@
 package hungryRope;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -26,12 +27,13 @@ import javax.swing.ImageIcon;
 public class HungryRope extends javax.swing.JFrame {
     static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
-    static int difficulty, repeats, frame, highScore = 0;
+    static int difficulty, repeats, frame, highScore = 0, aiNum = 1;
+    double averageScore = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
-    BufferedImage playArea;
+    BufferedImage playArea = new BufferedImage(WIDTH * GRIDSIZE, HEIGHT * GRIDSIZE, BufferedImage.TYPE_INT_RGB);
+    Graphics2D graphics = playArea.createGraphics();
     static Point food;
     static Snake[] snakes = new Snake[1];
-    ArrayList<Integer> scores = new ArrayList();
     static ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
@@ -65,11 +67,11 @@ public class HungryRope extends javax.swing.JFrame {
         labelDifficulty = new javax.swing.JLabel();
         labelMS = new javax.swing.JLabel();
         AIStart = new javax.swing.JButton();
-        buttonTestAI = new javax.swing.JButton();
         buttonLoadReplay = new javax.swing.JButton();
         checkSave = new javax.swing.JCheckBox();
         fieldSaveName = new javax.swing.JTextField();
         fieldLoadName = new javax.swing.JTextField();
+        buttonTestAI = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
@@ -125,13 +127,6 @@ public class HungryRope extends javax.swing.JFrame {
             }
         });
 
-        buttonTestAI.setText("Test AI");
-        buttonTestAI.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonTestAIActionPerformed(evt);
-            }
-        });
-
         buttonLoadReplay.setText("Load Replay");
         buttonLoadReplay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -147,6 +142,13 @@ public class HungryRope extends javax.swing.JFrame {
         fieldSaveName.setText("replayName");
 
         fieldLoadName.setText("replayName");
+
+        buttonTestAI.setText("Test");
+        buttonTestAI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonTestAIActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout backgroundLayout = new javax.swing.GroupLayout(background);
         background.setLayout(backgroundLayout);
@@ -169,14 +171,14 @@ public class HungryRope extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(AIStart)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonTestAI)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelDifficulty)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelMS)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonTestAI)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(77, 77, 77)
                         .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(checkSave)
@@ -186,7 +188,7 @@ public class HungryRope extends javax.swing.JFrame {
                         .addComponent(buttonLoadReplay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fieldLoadName, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 91, Short.MAX_VALUE)))
+                        .addGap(0, 32, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         backgroundLayout.setVerticalGroup(
@@ -194,27 +196,24 @@ public class HungryRope extends javax.swing.JFrame {
             .addGroup(backgroundLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundLayout.createSequentialGroup()
-                        .addComponent(title)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 558, Short.MAX_VALUE)
-                        .addComponent(iconPlayArea)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelScore))
-                    .addGroup(backgroundLayout.createSequentialGroup()
-                        .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(buttonStart)
-                            .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(youDied)
-                            .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelDifficulty)
-                            .addComponent(labelMS)
-                            .addComponent(AIStart)
-                            .addComponent(buttonTestAI)
-                            .addComponent(checkSave)
-                            .addComponent(fieldSaveName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonLoadReplay)
-                            .addComponent(fieldLoadName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(title)
+                    .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(buttonStart)
+                        .addComponent(keyInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(youDied)
+                        .addComponent(fieldDifficulty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(labelDifficulty)
+                        .addComponent(labelMS)
+                        .addComponent(AIStart)
+                        .addComponent(checkSave)
+                        .addComponent(fieldSaveName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buttonLoadReplay)
+                        .addComponent(fieldLoadName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buttonTestAI)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 558, Short.MAX_VALUE)
+                .addComponent(iconPlayArea)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelScore)
                 .addContainerGap())
         );
 
@@ -264,14 +263,6 @@ public class HungryRope extends javax.swing.JFrame {
         labelScore.setVisible(true);
     }//GEN-LAST:event_AIStartActionPerformed
 
-    private void buttonTestAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestAIActionPerformed
-        snakes[0] = new Snake(0, 150, 0, true);
-        test = true;
-        recordingReplay = checkSave.isSelected();
-        startGame();
-        labelScore.setVisible(true);
-    }//GEN-LAST:event_buttonTestAIActionPerformed
-
     private void buttonLoadReplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoadReplayActionPerformed
         try {
             replay = (ArrayList<String>) Files.readAllLines(Paths.get("replays/" +fieldLoadName.getText() + ".txt"));
@@ -284,6 +275,14 @@ public class HungryRope extends javax.swing.JFrame {
             fieldLoadName.setText("Enter an existing file");
         }
     }//GEN-LAST:event_buttonLoadReplayActionPerformed
+
+    private void buttonTestAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestAIActionPerformed
+        snakes[0] = new Snake(0, 150, 0, true);
+        test = true;
+        recordingReplay = checkSave.isSelected();
+        startGame();
+        labelScore.setVisible(true);
+    }//GEN-LAST:event_buttonTestAIActionPerformed
 
     public void startGame()
     {
@@ -301,8 +300,6 @@ public class HungryRope extends javax.swing.JFrame {
 
             buttonStart.setText("Restart?");
             buttonStart.setVisible(false);
-
-            playArea = new BufferedImage(WIDTH * GRIDSIZE, HEIGHT * GRIDSIZE, BufferedImage.TYPE_INT_RGB);
             for (int x = 0; x < WIDTH * GRIDSIZE; x++)
             {//Clears image used as playArea
                 for (int y = 0; y < HEIGHT * GRIDSIZE; y++)
@@ -322,7 +319,6 @@ public class HungryRope extends javax.swing.JFrame {
     public void changeVisible(boolean see)
     {
         //Changes visibility of start screen
-        youDied.setVisible(see);
         AIStart.setVisible(see);
         buttonTestAI.setVisible(see);
         buttonLoadReplay.setVisible(see);
@@ -376,10 +372,10 @@ public class HungryRope extends javax.swing.JFrame {
             do
             {
                 snakesAlive = false;
-                for (Snake snake : snakes) 
+                for (Snake snake : snakes)
                 {
                     if (snake.alive) snake.move();
-                    snakesAlive = snakesAlive ? true : snake.alive;
+                    snakesAlive = snakesAlive || snake.alive;
                 }
                 updateGrid();
                 if (!test || thisHighScore)
@@ -389,34 +385,31 @@ public class HungryRope extends javax.swing.JFrame {
                 }
             }while (snakesAlive);
 
-            scores.add(snakes[0].score);
-
-            double averageScore = 0;
-            for(int score : scores)
+            
+            if (snakes[0].score > highScore) 
             {
-                if (score > highScore) 
-                {
-                    highScore = score;
-                    if (recordingReplay) writeReplayToFile();
-                }
-                averageScore += score;
+                highScore = snakes[0].score;
+                if (recordingReplay) writeReplayToFile();
             }
 
             if (recordingReplay) replay.clear();
-
-            averageScore = (int)(averageScore / scores.size() * 100);
+            averageScore += snakes[0].score;
+            averageScore = aiNum != 1 ? (int)(averageScore / 2 * 100) : averageScore * 100;
             averageScore /= 100;
-            System.out.println(scores.size() + "  Highscore: " + highScore + "  Average score: " + averageScore);
+            System.out.println(aiNum + "  Highscore: " + highScore + "  Average score: " + averageScore);
+            aiNum++;
             thisHighScore = false;
-            if (scores.size() < repeats && test)
+            
+            if (aiNum < repeats && test)
             {
                 snakes[0] = new Snake(0, 150, 0, true);
                 startGame();
             }else
-            {                
-                test = false;
-                scores.clear();
+            {
+                averageScore = 0;
+                aiNum = 1;
                 highScore = 0;
+                test = false;
                 buttonStart.setVisible(true);
                 changeVisible(true);
             }
@@ -501,23 +494,17 @@ public class HungryRope extends javax.swing.JFrame {
         /**
          * Sets pixel colour for a rectangle({@code startX} * {@code GRIDSIZE}, {@code startY} * {@code GRIDSIZE}, {@code startX} + {@code GRIDSIZE},
          * {@code startY} + {@code GRIDSIZE}) on {@code playArea}
-         * @param startX Starting x coordinate
-         * @param startY Starting y coordinate
+         * @param rectX Starting x coordinate
+         * @param rectY Starting y coordinate
          * @param colour Colour for square
          */
-        public void colourSquare(int startX, int startY, Color colour)
+        public void colourSquare(int rectX, int rectY, Color colour)
         {
-            startX *= GRIDSIZE;
-            startY *= GRIDSIZE;
-            int endX = startX + GRIDSIZE;
-            int endY = startY + GRIDSIZE;
-            for (int x = startX; x < endX; x++)
-            {
-                for (int y = startY; y < endY; y++)
-                {
-                    playArea.setRGB (x, y, colour.getRGB());
-                }
-            }
+            rectX *= GRIDSIZE;
+            rectY *= GRIDSIZE;
+            graphics.setPaint (colour);
+            graphics.fillRect (rectX, rectY, GRIDSIZE, GRIDSIZE);
+            //playArea.setRGB (x, y, colour.getRGB());
         }
         
         /**
