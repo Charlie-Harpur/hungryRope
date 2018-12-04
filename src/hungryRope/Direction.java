@@ -19,10 +19,30 @@ public class Direction
      * @param axis axis of movement
      * @param posOrNeg direction along axis
      */
-    Direction (char axis, int posOrNeg)
+    Direction (char a, int pON)
     {
-        this.axis = axis;
-        this.posOrNeg = posOrNeg;
+        this.axis = a;
+        this.posOrNeg = pON;
+    }
+    
+    public void setAxis(char a)
+    {
+        axis = a;
+    }
+    
+    public void setPosOrNeg(int pON)
+    {
+        posOrNeg = pON;
+    }
+    
+    public char getAxis()
+    {
+        return axis;
+    }
+    
+    public int getPosOrNeg()
+    {
+        return posOrNeg;
     }
     
     /**

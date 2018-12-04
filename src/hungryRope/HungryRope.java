@@ -22,7 +22,7 @@ import javax.swing.ImageIcon;
 
 /**
  * @author Charlie Harpur
- * @version 0.2.3
+ * @version 0.3.0
  */
 public class HungryRope extends javax.swing.JFrame {
     static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
@@ -33,7 +33,7 @@ public class HungryRope extends javax.swing.JFrame {
     BufferedImage playArea = new BufferedImage(WIDTH * GRIDSIZE, HEIGHT * GRIDSIZE, BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = playArea.createGraphics();
     static Point food;
-    static Snake[] snakes = new Snake[1];
+    static Snake[] snakes = new Snake[4];
     static ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
@@ -258,6 +258,9 @@ public class HungryRope extends javax.swing.JFrame {
  
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
         snakes[0] = new Snake(0, 150, 0, true);
+        snakes[1] = new Snake(150, 0, 150, true);
+        snakes[2] = new Snake(150, 0, 150, true);
+        snakes[3] = new Snake(150, 0, 150, true);
         recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
@@ -381,7 +384,7 @@ public class HungryRope extends javax.swing.JFrame {
                 if (!test || thisHighScore)
                 {
                     paintScreen();
-                    sleep(difficulty);
+                    //sleep(difficulty);
                 }
             }while (snakesAlive);
 

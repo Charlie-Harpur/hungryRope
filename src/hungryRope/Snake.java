@@ -15,12 +15,11 @@ import java.util.ArrayList;
  * {@link bodyColour}, {@link direction}, and {@link alive}
  */
 public class Snake{
-    boolean aiStatus, alive;
-    int score, boxSize;
-    int[][] boxGrid = new int[WIDTH][HEIGHT];
+    boolean alive;
+    int score;
     Color bodyColour, headColour;
     Point head;
-    Direction direction, prevDirection;
+    Direction direction;
     ArrayList<Point> bodyCoords;
     
     /**
@@ -31,9 +30,8 @@ public class Snake{
      * @param aiStatus whether the Snake is AI controlled
      * @see Direction
      */
-    public Snake(int r, int g, int b, boolean aiStatus)
+    public Snake(int r, int g, int b)
     {
-        this.aiStatus = aiStatus;
         this.bodyColour = new Color(r, g, b);
         r = r > 0 ? 255 : 0;
         g = g > 0 ? 255 : 0;
@@ -41,8 +39,6 @@ public class Snake{
         this.headColour = new Color(r, g, b);
         this.score = 1;
         this.alive = true;
-        if (aiStatus) this.direction = new Direction('x', 1);
-        else this.direction = new Direction();
         this.bodyCoords = new ArrayList();
         if (!replaying)
         {
@@ -56,7 +52,6 @@ public class Snake{
     public void move()
     {
         head = bodyCoords.get(0);
-        if(aiStatus) aiMove();
         try
         {
             moveSnake();
@@ -66,69 +61,6 @@ public class Snake{
             replaying = false;
         } catch (IOException ex) {
             System.out.println("IOEXCEPTION");
-        }
-    }
-    
-    /**
-     * Determines the {@link Direction} of an AI controlled {@link Snake}
-     */
-    public void aiMove()
-    {
-        Direction checkingDirection = direction;
-        int longestDirectionLength = 0, largestBoxSize = 0;
-        ArrayList<Direction> orthDirections = new ArrayList();
-        
-        for (int axisChanger = 0; axisChanger < 2; axisChanger++)
-        {
-            for (int posOrNegChanger = 0; posOrNegChanger < 2; posOrNegChanger++)
-            {
-                orthDirections.add(new Direction (checkingDirection.axis, checkingDirection.posOrNeg));
-                checkingDirection.posOrNeg *= -1;
-            }
-         checkingDirection.axis = checkingDirection.notAxis();
-        }
-        
-        //Primary Objective (Move towards food)
-        direction.axis = getCoord(direction.axis, head) != getCoord(direction.axis, food) ? direction.axis : 
-                getCoord(direction.notAxis(), head) != getCoord(direction.notAxis(), food) ? direction.notAxis() : ' ';
-        direction.posOrNeg = getFoodDirection(direction.axis);
-
-        if (getBoxSize(direction) < this.score)
-        {
-            //Checks other direction to food
-            direction = new Direction(direction.notAxis(), getFoodDirection(direction.notAxis()));
-
-            //Catch all
-            if(getBoxSize(direction) < this.score)
-            {
-                ArrayList<Direction> equalBoxSize = new ArrayList();
-                for(Direction catchDirection : orthDirections)
-                {
-                    if(getBoxSize(catchDirection) > largestBoxSize)
-                    {
-                        equalBoxSize.clear();
-                        equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
-                        largestBoxSize = getBoxSize(catchDirection);
-                        direction = catchDirection;
-                    }else if(largestBoxSize == getBoxSize(catchDirection))
-                    {
-                        equalBoxSize.add(new Direction(catchDirection.axis, catchDirection.posOrNeg));
-                    }
-                }
-
-                //If multiple directions have an equal box size that's also the largest found
-                if (equalBoxSize.size() > 1)
-                {
-                    for (Direction catchDirection : equalBoxSize)
-                    {
-                        if (checkDirection(head, catchDirection) > longestDirectionLength)
-                        {
-                            longestDirectionLength = checkDirection(head, catchDirection);
-                            direction = catchDirection;
-                        }
-                    }
-                }
-            }
         }
     }
     
@@ -258,7 +190,7 @@ public class Snake{
             }else if (direction.axis == 'x')
             {
                 bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
-            }// gotcha again loser
+            }
         }
         
         head = bodyCoords.get(0);
