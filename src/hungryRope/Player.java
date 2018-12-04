@@ -12,5 +12,10 @@ package hungryRope;
  */
 public class Player extends Snake{
     Direction prevDirection;
+    
+    public Player(int r, int g, int b)
+    {
+        super(r, g, b);
         this.direction = new Direction();
+    }
 }

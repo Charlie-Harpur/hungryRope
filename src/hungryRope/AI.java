@@ -7,6 +7,7 @@
 package hungryRope;
 
 import static hungryRope.HungryRope.*;
+import java.awt.Point;
 import java.util.ArrayList;
 
 /**
@@ -84,5 +85,99 @@ public class AI extends Snake{
                 }
             }
         }
+    }
+    
+    /**
+     * Returns the size of available space in a direction from the head
+     * @param checkingDirection Direction from head to check
+     * @return Available space in {@code checkingDirection} maxed out at score + 1
+     */
+    public int getBoxSize(Direction checkingDirection)
+    {
+        for (int x = 0; x < boxGrid.length; x++)
+        {
+            for (int y = 0; y < boxGrid[0].length; y++)
+            {
+                boxGrid[x][y] = 0;
+            }
+        }
+        boxSize = 0;
+        
+        boxChecker(makePoint(checkingDirection.axis, getCoord(checkingDirection.axis, head) + checkingDirection.posOrNeg, getCoord(checkingDirection.notAxis(), head)));
+        return boxSize;
+    }
+    
+    public void boxChecker(Point checkingPoint)
+    {
+      if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0 && !(boxSize > this.score))
+      {
+          boxGrid[checkingPoint.x][checkingPoint.y] = 1;
+          boxSize++;
+          boxChecker(new Point(checkingPoint.x - 1, checkingPoint.y));
+          boxChecker(new Point(checkingPoint.x, checkingPoint.y - 1));
+          boxChecker(new Point(checkingPoint.x, checkingPoint.y + 1));
+          boxChecker(new Point(checkingPoint.x + 1, checkingPoint.y));
+      }
+    }
+    
+    /**
+     * Gets the positive or negative movement along an axis for the head to get to the food
+     * @param axis The axis to check
+     * @return Direction along axis the head must move to get to the food
+     */
+    public int getFoodDirection(char axis)
+    {
+        return getCoord(axis, head) > getCoord(axis, food) ? -1 : 1;
+    }
+    
+    /**
+     * Checks if the next place the Snake will be is a body part of any Snake
+     * @return True if the next coordinate is a body
+     */
+    public Point nextCoord()
+    {
+        return makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(direction.notAxis(), head));
+    }
+    
+    /**
+     * Finds the furthest orthogonal direction the snake can safely travel
+     * @return Furthest {@link Direction} the snake can travel
+     */
+    public Direction longestDirection()
+    {
+        Direction longestDirection = new Direction (' ', 0);
+        int longestDirectionNum = 0;
+        char axis = this.direction.axis;
+        for (int axisNum = 0; axisNum < 2; axisNum++)
+        {
+            for (int posOrNeg = 1; posOrNeg >= -1; posOrNeg -= 2)
+            {
+                if (checkDirection(head, new Direction(axis, posOrNeg)) > longestDirectionNum)
+                {
+                    longestDirectionNum = checkDirection(head, new Direction(axis, posOrNeg));
+                    longestDirection = new Direction(axis, posOrNeg);
+                }
+            }
+            axis = new Direction (axis, 0).notAxis();
+        }
+        return longestDirection;
+    }
+    
+    /**
+     * Finds how far the Snake can safely travel in that {@link Direction}
+     * @param point Point to checkingDirection from
+     * @param direction {@link Direction} to check length
+     * @return length the Snake can safely travel in that {@link Direction}
+     */
+    public int checkDirection(Point point, Direction direction)
+    {
+        int dimension = direction.posOrNeg == 1 ? direction.axis == 'x' ? WIDTH - 1 : HEIGHT - 1 : 0, distance = 0;
+        for (int i = getCoord(direction.axis, point) + direction.posOrNeg; (i >= dimension && direction.posOrNeg == -1) || (i < dimension && direction.posOrNeg == 1); i += direction.posOrNeg)
+        {
+            distance = direction.posOrNeg > 0 ? i - getCoord(direction.axis, point) : getCoord(direction.axis, point) - i;
+            if (checkBody(makePoint(direction.axis, i, getCoord(direction.notAxis(), point))))
+                break;
+        }
+        return distance;
     }
 }
