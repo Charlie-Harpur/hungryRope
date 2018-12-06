@@ -14,7 +14,8 @@ import java.util.ArrayList;
  * Snake class stores snake data such as {@link bodyCoords}, {@link aiStatus}, {@link headColour},
  * {@link bodyColour}, {@link direction}, and {@link alive}
  */
-public class Snake{
+public abstract class Snake
+{
     boolean alive;
     int score;
     Color bodyColour, headColour;
@@ -32,84 +33,79 @@ public class Snake{
      */
     public Snake(int r, int g, int b)
     {
-        this.bodyColour = new Color(r, g, b);
+        bodyColour = new Color(r, g, b);
         r = r > 0 ? 255 : 0;
         g = g > 0 ? 255 : 0;
         b = b > 0 ? 255 : 0;
-        this.headColour = new Color(r, g, b);
-        this.score = 1;
-        this.alive = true;
-        this.bodyCoords = new ArrayList();
+        headColour = new Color(r, g, b);
+        score = 1;
+        alive = true;
+        bodyCoords = new ArrayList();
         if (!replaying)
         {
-            this.bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
+            bodyCoords.add(new Point (random(4, WIDTH - 4), random(4, HEIGHT - 4)));
         }
     }
     
     /**
      * Moves snake and changes direction if {@link aiStatus} = true
      */
-    public void move()
+    public abstract void move();
+
+    /**
+     * Moves the snake and its and its body Point {@link Direction} along the grid
+     * also checks if the snake has hit the edges/body parts, and if it's collected food
+     * @see Direction
+     */
+    public void moveSnake()
     {
-        head = bodyCoords.get(0);
         try
         {
-            moveSnake();
+            //Moves bodyCoords, checks for food collection, and checks if the bodyCoords rammed itself
+            Point prevHead = bodyCoords.get(0);
+            //Variable used to prevent bodyCoords from going back in on itself
+            //prevDirection = direction;
+
+            if (bodyCoords.size() != score)
+            {//Grows the bodyCoords
+                bodyCoords.add(new Point(0,0));
+            }
+            for (int i = bodyCoords.size() - 1; i > 0; i--)
+            {//Moves the bodyCoords body forwards
+                bodyCoords.set(i, bodyCoords.get(i - 1));
+            }
+
+            if (replaying)
+            {
+                bodyCoords.set(0, new Point (readFileLine(frame * 4), readFileLine(frame * 4 + 1)));
+            }else{
+                if (direction.axis == 'y')
+                {//Moves the bodyCoords head forwards if the direction is +2 or -2 it moves along y axis otherwise it moves along x
+                    bodyCoords.set(0, new Point ((int) prevHead.x, (int) prevHead.getY() + direction.posOrNeg));
+                }else if (direction.axis == 'x')
+                {
+                    bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
+                }
+            }
+
+            head = bodyCoords.get(0);
+
+            checkFood();
+
+            checkHit();
+            if (recordingReplay)
+            {
+                replay.add("" + head.x);
+                replay.add("" + head.y);
+                replay.add("" + food.x);
+                replay.add("" + food.y);
+            }
         }
         catch(IndexOutOfBoundsException IOOBE)
         {
             replaying = false;
         } catch (IOException ex) {
             System.out.println("IOEXCEPTION");
-        }
-    }
-
-    /**
-     * Moves the snake and its and its body Point {@link Direction} along the grid
-     * also checks if the snake has hit the edges/body parts, and if it's collected food
-     * @throws java.io.IOException
-     * @see Direction
-     */
-    public void moveSnake() throws IndexOutOfBoundsException, IOException
-    {
-        //Moves bodyCoords, checks for food collection, and checks if the bodyCoords rammed itself
-        Point prevHead = bodyCoords.get(0);
-        //Variable used to prevent bodyCoords from going back in on itself
-        //prevDirection = direction;
-
-        if (bodyCoords.size() != score)
-        {//Grows the bodyCoords
-            bodyCoords.add(new Point(0,0));
-        }
-        for (int i = bodyCoords.size() - 1; i > 0; i--)
-        {//Moves the bodyCoords body forwards
-            bodyCoords.set(i, bodyCoords.get(i - 1));
-        }
-        
-        if (replaying)
-        {
-            bodyCoords.set(0, new Point (readFileLine(frame * 4), readFileLine(frame * 4 + 1)));
-        }else{
-            if (direction.axis == 'y')
-            {//Moves the bodyCoords head forwards if the direction is +2 or -2 it moves along y axis otherwise it moves along x
-                bodyCoords.set(0, new Point ((int) prevHead.x, (int) prevHead.getY() + direction.posOrNeg));
-            }else if (direction.axis == 'x')
-            {
-                bodyCoords.set(0, new Point ((int) prevHead.x + direction.posOrNeg, (int) prevHead.getY()));
-            }
-        }
-        
-        head = bodyCoords.get(0);
-
-        checkFood();
-
-        checkHit();
-        if (recordingReplay)
-        {
-            replay.add("" + head.x);
-            replay.add("" + head.y);
-            replay.add("" + food.x);
-            replay.add("" + food.y);
         }
     }
 
@@ -162,9 +158,9 @@ public class Snake{
     {
         //for (Snake snakeCheckHit : snakes)
         //{
-            for (int bodyCoordIndex = !this.equals(this) ? 0 : 1; bodyCoordIndex < this.bodyCoords.size(); bodyCoordIndex++)
+            for (int bodyCoordIndex = !this.equals(this) ? 0 : 1; bodyCoordIndex < bodyCoords.size(); bodyCoordIndex++)
             {
-                if (this.bodyCoords.get(bodyCoordIndex).equals(head))
+                if (bodyCoords.get(bodyCoordIndex).equals(head))
                 {
                     alive = false;
                 }

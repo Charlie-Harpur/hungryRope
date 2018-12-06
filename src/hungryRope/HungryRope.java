@@ -33,7 +33,7 @@ public class HungryRope extends javax.swing.JFrame {
     BufferedImage playArea = new BufferedImage(WIDTH * GRIDSIZE, HEIGHT * GRIDSIZE, BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = playArea.createGraphics();
     static Point food;
-    static Snake[] snakes = new Snake[4];
+    static Snake[] snakes = new Snake[1];
     static ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
@@ -232,14 +232,14 @@ public class HungryRope extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
-        snakes[0] = new Snake(0, 150, 0, false);
+        snakes[0] = new Player(0, 150, 0);
         recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_buttonStartActionPerformed
 
     private void keyInputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyInputKeyTyped
-        char keyTyped = toLowerCase(evt.getKeyChar());
+       /* char keyTyped = toLowerCase(evt.getKeyChar());
         
         if ((evt.getKeyCode() == KeyEvent.VK_UP || keyTyped == 'w')  && (!snakes[0].prevDirection.equals(new Direction ('y', 1)) || snakes[0].score == 1))
         {//Checks key and prevents snake from going in on itself
@@ -253,14 +253,11 @@ public class HungryRope extends javax.swing.JFrame {
         }else if ((evt.getKeyCode() == KeyEvent.VK_RIGHT || keyTyped == 'd') && (!snakes[0].prevDirection.equals(new Direction ('x', -1)) || snakes[0].score == 1))
         {
             snakes[0].direction = new Direction ('x', 1);
-        }
+        }*/
     }//GEN-LAST:event_keyInputKeyTyped
  
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
-        snakes[0] = new Snake(0, 150, 0, true);
-        snakes[1] = new Snake(150, 0, 150, true);
-        snakes[2] = new Snake(150, 0, 150, true);
-        snakes[3] = new Snake(150, 0, 150, true);
+        snakes[0] = new AI(0, 150, 0);
         recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
@@ -271,7 +268,7 @@ public class HungryRope extends javax.swing.JFrame {
             replay = (ArrayList<String>) Files.readAllLines(Paths.get("replays/" +fieldLoadName.getText() + ".txt"));
             replaying = true;
             recordingReplay = false;
-            snakes[0] = new Snake(0, 150, 0, false);
+            snakes[0] = new Player(0, 150, 0);
             startGame();
             labelScore.setVisible(true);
         } catch (IOException ex) {
@@ -280,7 +277,7 @@ public class HungryRope extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonLoadReplayActionPerformed
 
     private void buttonTestAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestAIActionPerformed
-        snakes[0] = new Snake(0, 150, 0, true);
+        snakes[0] = new AI(0, 150, 0);
         test = true;
         recordingReplay = checkSave.isSelected();
         startGame();
@@ -405,7 +402,7 @@ public class HungryRope extends javax.swing.JFrame {
             
             if (aiNum < repeats && test)
             {
-                snakes[0] = new Snake(0, 150, 0, true);
+                snakes[0] = new AI(0, 150, 0);
                 startGame();
             }else
             {

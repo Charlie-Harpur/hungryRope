@@ -8,6 +8,7 @@ package hungryRope;
 
 import static hungryRope.HungryRope.*;
 import java.awt.Point;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -24,10 +25,17 @@ public class AI extends Snake{
         this.direction = new Direction('x', 1);
     }
     
+    public void move()
+    {
+        head = bodyCoords.get(0);
+        aiMove();
+        moveSnake();
+    }
+    
     /**
      * Determines the {@link Direction} of an AI controlled {@link Snake}
      */
-    public void aiMove()
+    private void aiMove()
     {
         Direction checkingDirection = direction;
         int longestDirectionLength = 0, largestBoxSize = 0;
@@ -92,7 +100,7 @@ public class AI extends Snake{
      * @param checkingDirection Direction from head to check
      * @return Available space in {@code checkingDirection} maxed out at score + 1
      */
-    public int getBoxSize(Direction checkingDirection)
+    private int getBoxSize(Direction checkingDirection)
     {
         for (int x = 0; x < boxGrid.length; x++)
         {
@@ -107,7 +115,7 @@ public class AI extends Snake{
         return boxSize;
     }
     
-    public void boxChecker(Point checkingPoint)
+    private void boxChecker(Point checkingPoint)
     {
       if (!checkBody(checkingPoint) && boxGrid[checkingPoint.x][checkingPoint.y] == 0 && !(boxSize > this.score))
       {
@@ -125,7 +133,7 @@ public class AI extends Snake{
      * @param axis The axis to check
      * @return Direction along axis the head must move to get to the food
      */
-    public int getFoodDirection(char axis)
+    private int getFoodDirection(char axis)
     {
         return getCoord(axis, head) > getCoord(axis, food) ? -1 : 1;
     }
@@ -134,7 +142,7 @@ public class AI extends Snake{
      * Checks if the next place the Snake will be is a body part of any Snake
      * @return True if the next coordinate is a body
      */
-    public Point nextCoord()
+    private Point nextCoord()
     {
         return makePoint(direction.axis, getCoord(direction.axis, head) + direction.posOrNeg, getCoord(direction.notAxis(), head));
     }
@@ -143,7 +151,7 @@ public class AI extends Snake{
      * Finds the furthest orthogonal direction the snake can safely travel
      * @return Furthest {@link Direction} the snake can travel
      */
-    public Direction longestDirection()
+    private Direction longestDirection()
     {
         Direction longestDirection = new Direction (' ', 0);
         int longestDirectionNum = 0;
@@ -169,7 +177,7 @@ public class AI extends Snake{
      * @param direction {@link Direction} to check length
      * @return length the Snake can safely travel in that {@link Direction}
      */
-    public int checkDirection(Point point, Direction direction)
+    private int checkDirection(Point point, Direction direction)
     {
         int dimension = direction.posOrNeg == 1 ? direction.axis == 'x' ? WIDTH - 1 : HEIGHT - 1 : 0, distance = 0;
         for (int i = getCoord(direction.axis, point) + direction.posOrNeg; (i >= dimension && direction.posOrNeg == -1) || (i < dimension && direction.posOrNeg == 1); i += direction.posOrNeg)

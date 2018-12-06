@@ -18,4 +18,10 @@ public class Player extends Snake{
         super(r, g, b);
         this.direction = new Direction();
     }
+    
+    public void move()
+    {
+        head = bodyCoords.get(0);
+        moveSnake();
+    }
 }
