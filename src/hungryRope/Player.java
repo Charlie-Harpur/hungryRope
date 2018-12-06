@@ -16,7 +16,8 @@ public class Player extends Snake{
     public Player(int r, int g, int b)
     {
         super(r, g, b);
-        this.direction = new Direction();
+        direction = new Direction();
+        prevDirection = new Direction();
     }
     
     public void move()

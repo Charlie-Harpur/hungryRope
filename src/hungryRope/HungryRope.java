@@ -25,15 +25,16 @@ import javax.swing.ImageIcon;
  * @version 0.3.0
  */
 public class HungryRope extends javax.swing.JFrame {
-    static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false, thisHighScore = false;
+    static boolean snakesAlive, pause = false, test = false, recordingReplay, replaying = false;
     final static int WIDTH = 75, HEIGHT = 35, GRIDSIZE = 15;
-    static int difficulty, repeats, frame, highScore = 0, aiNum = 1;
-    double averageScore = 0;
+    static int difficulty, repeats, frame, highScore = 0, lowScore = 999, aiNum = 1;
+    double averageScore = 0, averageTime = 0;
     static String[][] grid = new String[WIDTH][HEIGHT];
     BufferedImage playArea = new BufferedImage(WIDTH * GRIDSIZE, HEIGHT * GRIDSIZE, BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = playArea.createGraphics();
     static Point food;
-    static Snake[] snakes = new Snake[1];
+    static ArrayList<Snake> snakes = new ArrayList();
+    static ArrayList<Player> players = new ArrayList();
     static ArrayList<String> replay = new ArrayList();
     GameThread game = new GameThread();
     
@@ -232,32 +233,33 @@ public class HungryRope extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
-        snakes[0] = new Player(0, 150, 0);
+        players.add(new Player(0, 150, 0));
+        snakes.add(players.get(0));
         recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
     }//GEN-LAST:event_buttonStartActionPerformed
 
     private void keyInputKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyInputKeyTyped
-       /* char keyTyped = toLowerCase(evt.getKeyChar());
+        char keyTyped = toLowerCase(evt.getKeyChar());
         
-        if ((evt.getKeyCode() == KeyEvent.VK_UP || keyTyped == 'w')  && (!snakes[0].prevDirection.equals(new Direction ('y', 1)) || snakes[0].score == 1))
+        if ((evt.getKeyCode() == KeyEvent.VK_UP || keyTyped == 'w')  && (!players.get(0).prevDirection.equals(new Direction ('y', 1)) || snakes.get(0).score == 1))
         {//Checks key and prevents snake from going in on itself
-            snakes[0].direction = new Direction ('y', -1);
-        }else if ((evt.getKeyCode() == KeyEvent.VK_DOWN || keyTyped == 's') && (!snakes[0].prevDirection.equals(new Direction ('y', -1)) || snakes[0].score == 1))
+            snakes.get(0).direction = new Direction ('y', -1);
+        }else if ((evt.getKeyCode() == KeyEvent.VK_DOWN || keyTyped == 's') && (!players.get(0).prevDirection.equals(new Direction ('y', -1)) || snakes.get(0).score == 1))
         {
-            snakes[0].direction = new Direction ('y', 1);
-        }else if ((evt.getKeyCode() == KeyEvent.VK_LEFT || keyTyped == 'a') && (!snakes[0].prevDirection.equals(new Direction ('x', 1)) || snakes[0].score == 1))
+            snakes.get(0).direction = new Direction ('y', 1);
+        }else if ((evt.getKeyCode() == KeyEvent.VK_LEFT || keyTyped == 'a') && (!players.get(0).prevDirection.equals(new Direction ('x', 1)) || snakes.get(0).score == 1))
         {
-            snakes[0].direction = new Direction ('x', -1);
-        }else if ((evt.getKeyCode() == KeyEvent.VK_RIGHT || keyTyped == 'd') && (!snakes[0].prevDirection.equals(new Direction ('x', -1)) || snakes[0].score == 1))
+            snakes.get(0).direction = new Direction ('x', -1);
+        }else if ((evt.getKeyCode() == KeyEvent.VK_RIGHT || keyTyped == 'd') && (!players.get(0).prevDirection.equals(new Direction ('x', -1)) || snakes.get(0).score == 1))
         {
-            snakes[0].direction = new Direction ('x', 1);
-        }*/
+            snakes.get(0).direction = new Direction ('x', 1);
+        }
     }//GEN-LAST:event_keyInputKeyTyped
  
     private void AIStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AIStartActionPerformed
-        snakes[0] = new AI(0, 150, 0);
+        snakes.add(new AI(0, 150, 0));
         recordingReplay = checkSave.isSelected();
         startGame();
         labelScore.setVisible(true);
@@ -268,7 +270,7 @@ public class HungryRope extends javax.swing.JFrame {
             replay = (ArrayList<String>) Files.readAllLines(Paths.get("replays/" +fieldLoadName.getText() + ".txt"));
             replaying = true;
             recordingReplay = false;
-            snakes[0] = new Player(0, 150, 0);
+            snakes.add(new Player(0, 150, 0));
             startGame();
             labelScore.setVisible(true);
         } catch (IOException ex) {
@@ -277,7 +279,7 @@ public class HungryRope extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonLoadReplayActionPerformed
 
     private void buttonTestAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestAIActionPerformed
-        snakes[0] = new AI(0, 150, 0);
+        snakes.add(new AI(0, 150, 0));
         test = true;
         recordingReplay = checkSave.isSelected();
         startGame();
@@ -347,14 +349,14 @@ public class HungryRope extends javax.swing.JFrame {
         public void replaying()
         {
             try {
-                    snakes[0].bodyCoords.add(new Point (readFileLine(0), readFileLine(1)));
+                    snakes.get(0).bodyCoords.add(new Point (readFileLine(0), readFileLine(1)));
                     food = new Point(readFileLine(2), readFileLine(3));
                 } catch (IOException ex) {
                     System.out.println("ERR");
                 }
                 while(replaying)
                 {
-                    snakes[0].move();
+                    snakes.get(0).move();
                     updateGrid();
                     paintScreen();
                     //sleep(difficulty);
@@ -374,41 +376,50 @@ public class HungryRope extends javax.swing.JFrame {
                 snakesAlive = false;
                 for (Snake snake : snakes)
                 {
+                    long time = System.nanoTime();
                     if (snake.alive) snake.move();
+                    averageTime = (averageTime + (double) (System.nanoTime() - time) / 1000000) / 2;
                     snakesAlive = snakesAlive || snake.alive;
                 }
                 updateGrid();
-                if (!test || thisHighScore)
+                if (!test)
                 {
                     paintScreen();
-                    //sleep(difficulty);
+                    sleep(difficulty);
                 }
             }while (snakesAlive);
 
             
-            if (snakes[0].score > highScore) 
+            if (snakes.get(0).score > highScore) 
             {
-                highScore = snakes[0].score;
+                highScore = snakes.get(0).score;
                 if (recordingReplay) writeReplayToFile();
+            }
+            if (snakes.get(0).score < lowScore)
+            {
+                lowScore = snakes.get(0).score;
             }
 
             if (recordingReplay) replay.clear();
-            averageScore += snakes[0].score;
+            averageScore += snakes.get(0).score;
             averageScore = aiNum != 1 ? (int)(averageScore / 2 * 100) : averageScore * 100;
             averageScore /= 100;
-            System.out.println(aiNum + "  Highscore: " + highScore + "  Average score: " + averageScore);
+            averageTime = (double)((int)(averageTime * 100))/100;
+            System.out.println(aiNum + "  Highscore: " + highScore + "  Lowest score: " + lowScore + "  Average score: " + averageScore + "  Average move time: " + averageTime);
             aiNum++;
-            thisHighScore = false;
             
             if (aiNum < repeats && test)
             {
-                snakes[0] = new AI(0, 150, 0);
+                snakes.set(0, new AI(0, 150, 0));
                 startGame();
             }else
             {
+                snakes.clear();
+                players.clear();
                 averageScore = 0;
                 aiNum = 1;
                 highScore = 0;
+                lowScore = 999;
                 test = false;
                 buttonStart.setVisible(true);
                 changeVisible(true);
@@ -428,19 +439,19 @@ public class HungryRope extends javax.swing.JFrame {
                     grid[x][y] = " blank ";
                 }
             }
-            for (int snakeIndex = 0; snakeIndex < snakes.length; snakeIndex++)
+            for (int snakeIndex = 0; snakeIndex < snakes.size(); snakeIndex++)
             {
                 try
                 {
-                    for(int bodyIndex = 1; bodyIndex < snakes[snakeIndex].bodyCoords.size(); bodyIndex++)
+                    for(int bodyIndex = 1; bodyIndex < snakes.get(snakeIndex).bodyCoords.size(); bodyIndex++)
                     {//Writes snake body to grid
-                        grid[(int) getCoord('x', snakes[snakeIndex].bodyCoords.get(bodyIndex))][(int) getCoord('y', snakes[snakeIndex].bodyCoords.get(bodyIndex))] = snakeIndex + " body " + bodyIndex;
+                        grid[(int) getCoord('x', snakes.get(snakeIndex).bodyCoords.get(bodyIndex))][(int) getCoord('y', snakes.get(snakeIndex).bodyCoords.get(bodyIndex))] = snakeIndex + " body " + bodyIndex;
                     }
-                    grid[(int) snakes[snakeIndex].bodyCoords.get(0).getX()][(int) snakes[snakeIndex].bodyCoords.get(0).getY()] = snakeIndex + " head ";//Makes head different
+                    grid[(int) snakes.get(snakeIndex).bodyCoords.get(0).getX()][(int) snakes.get(snakeIndex).bodyCoords.get(0).getY()] = snakeIndex + " head ";//Makes head different
                     grid[(int) food.getX()][(int) food.getY()] = " food ";//Sets food coords
                 }catch (ArrayIndexOutOfBoundsException offSide)
                 {//If the snake goes offside
-                    snakes[snakeIndex].alive = false;
+                    snakes.get(snakeIndex).alive = false;
                 }
             }
         }
@@ -475,10 +486,10 @@ public class HungryRope extends javax.swing.JFrame {
                             else colourSquare(x, y, new Color (0, 0, 255));
                             break;
                         case "body":
-                            colourSquare(x, y, snakes[snakeIndex].bodyColour);
+                            colourSquare(x, y, snakes.get(snakeIndex).bodyColour);
                             break;
                         case "head":
-                            colourSquare(x, y, snakes[snakeIndex].headColour);
+                            colourSquare(x, y, snakes.get(snakeIndex).headColour);
                             break;
                         case "food":
                             colourSquare(x, y, new Color(255, 255, 0));
@@ -487,7 +498,7 @@ public class HungryRope extends javax.swing.JFrame {
                     }
                 }
             }
-            labelScore.setText("Score: " + snakes[0].score);
+            labelScore.setText("Score: " + snakes.get(0).score);
             iconPlayArea.setIcon(new ImageIcon(playArea));
         }
         
